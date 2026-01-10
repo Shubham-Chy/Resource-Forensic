@@ -1,0 +1,20 @@
+
+{
+  "name": "resource-forensic",
+  "version": "1.0.0",
+  "description": "Premium editing resource archive with forensic aesthetic.",
+  "main": "index.tsx",
+  "dependencies": {
+    "react": "^19.2.3",
+    "react-dom": "^19.2.3",
+    "@google/genai": "latest"
+  },
+  "keywords": [
+    "editing",
+    "resources",
+    "forensic",
+    "archive"
+  ],
+  "author": "Forensic Admin",
+  "license": "MIT"
+}

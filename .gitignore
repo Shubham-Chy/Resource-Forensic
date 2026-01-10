@@ -1,8 +1,2 @@
 
-node_modules/
-.DS_Store
-dist/
-.env
-# Local storage backup (if exported)
-*.json
-!metadata.json
+
