@@ -7,6 +7,15 @@ import { Resource, ResourceCategory } from '../types';
  */
 const INITIAL_RESOURCES: Resource[] = [
   {
+    "category": "Software",
+    "name": "After Effect - 2024",
+    "thumbnail": "https://i.ibb.co/FkKS6Nc8/image.webp",
+    "description": "Free Download Adobe After Effects CC Pre-Activated offline installer for Windows.",
+    "downloadUrl": "https://work.ink/2bBx/after-effect-2024",
+    "id": "res-1768042729258",
+    "createdAt": 1768042729258
+  },
+  {
     "category": "Anime Clips",
     "name": "Chainsaw Man - Reze Arc",
     "youtubeId": "OvN4MXnW2Qw",
