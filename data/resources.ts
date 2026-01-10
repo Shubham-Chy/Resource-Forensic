@@ -7,37 +7,17 @@ import { Resource, ResourceCategory } from '../types';
  */
 const INITIAL_RESOURCES: Resource[] = [
   {
-    "id": "sw-1",
-    "name": "After Effects Pro Kit",
-    "category": "Software" as any,
-    "description": "A pre-configured setup for high-end motion graphics with essential pre-installed scripts.",
-    "thumbnail": "https://images.unsplash.com/photo-1550745165-9bc0b252726f?auto=format&fit=crop&q=80&w=1200",
-    "downloadUrl": "#",
-    "youtubeId": "dQw4w9WgXcQ",
-    "createdAt": 1739265604169
-  },
-  {
-    "id": "pl-1",
-    "name": "Sapphire Revived",
-    "category": "Plugins" as any,
-    "description": "The legendary VFX plugin pack with custom presets for modern editing styles.",
-    "thumbnail": "https://images.unsplash.com/photo-1614850523296-d8c1af93d400?auto=format&fit=crop&q=80&w=1200",
-    "downloadUrl": "#",
-    "youtubeId": "9bZkp7q19f0",
-    "createdAt": 1739438404169
-  },
-  {
-    "id": "ac-1",
-    "name": "Jujutsu Kaisen 4K Raw",
-    "category": "Anime Clips" as any,
-    "description": "Lossless 4K clips from the Shibuya Incident arc, perfectly synced for AMVs.",
-    "thumbnail": "https://images.unsplash.com/photo-1578632738980-23055509e3e1?auto=format&fit=crop&q=80&w=1200",
-    "downloadUrl": "#",
-    "driveUrl": "https://drive.google.com",
-    "getKeyUrl": "https://example.com/get-key",
-    "createdAt": 1739611204169
+    "category": "Anime Clips",
+    "name": "Chainsaw Man - Reze Arc",
+    "youtubeId": "OvN4MXnW2Qw",
+    "driveUrl": "https://mega.nz/folder/xJciFQJB",
+    "getKeyUrl": "https://work.ink/2bBx/anime-forensic-chainsaw-man-reze-arc-clips",
+    "description": "Welcome to the ultimate editing resource for Chainsaw Man – The Movie: Reze Arc. We are dedicated to supporting the editing community by providing high-quality, upscaled, and raw clips completely for free.",
+    "thumbnail": "https://i.ibb.co/D35KSbc/Ov-N4-MXn-W2-Qw-HD.jpg",
+    "id": "res-1768039688845",
+    "createdAt": 1768039688845
   }
-] as Resource[];
+] as any;
 
 const STORAGE_KEY = 'resource_forensic_vault';
 
