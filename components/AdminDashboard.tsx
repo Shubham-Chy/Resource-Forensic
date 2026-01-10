@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect, useRef } from 'react';
 import { Resource, ResourceCategory, CATEGORY_JP } from '../types';
 import { getResources, saveResource, deleteResource, updateResource } from '../data/resources';
@@ -546,7 +545,7 @@ export const deleteResource = (id: string) => {
             <div className="p-6 md:p-10 border-b border-white/5 flex justify-between items-center">
                <div>
                   <h3 className="text-xl md:text-2xl font-black uppercase tracking-[0.3em] text-blue-400">GitHub_Sync_Generator</h3>
-                  <p className="text-[9px] opacity-40 uppercase tracking-widest mt-1">Copy code -> Update data/resources.ts -> Push to GitHub</p>
+                  <p className="text-[9px] opacity-40 uppercase tracking-widest mt-1">Copy code {'->'} Update data/resources.ts {'->'} Push to GitHub</p>
                </div>
                <button onClick={() => setShowDeployModal(false)} className="clickable p-2 opacity-30 hover:opacity-100">
                   <svg width="24" height="24" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path d="M6 18L18 6M6 6l12 12" /></svg>
