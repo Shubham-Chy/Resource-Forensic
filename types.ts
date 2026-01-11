@@ -1,4 +1,3 @@
-
 export enum ResourceCategory {
   SOFTWARE = 'Software',
   PLUGINS = 'Plugins',
@@ -36,7 +35,8 @@ export interface Resource {
   youtubeId?: string;
   driveUrl?: string; // Legacy field for single link
   driveLinks?: MirrorLink[]; // New field for multiple mirrors
-  getKeyUrl?: string;
+  getKeyUrl?: string; // Legacy field for single key
+  keyLinks?: MirrorLink[]; // New field for multiple keys
   createdAt?: number;
 }
 

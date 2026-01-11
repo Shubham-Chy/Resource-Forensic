@@ -7,6 +7,15 @@ import { Resource, ResourceCategory } from '../types';
  */
 const INITIAL_RESOURCES: Resource[] = [
   {
+    "category": "Software",
+    "name": "Premiere Pro - 2025",
+    "description": "Free Download Adobe Premiere Pro Pre-Activated offline installer for Windows.",
+    "thumbnail": "https://i.ibb.co/tpbDbbN9/premiere-pro.webp",
+    "downloadUrl": "https://work.ink/2bBx/Premiere-Pro-2025",
+    "id": "res-1768144076610",
+    "createdAt": 1768144076610
+  },
+  {
     "category": "Anime Clips",
     "name": "Suzume",
     "description": "We are providing free clips resources to editors at 4k quality for free of cost and we just ask u to not use any adblocker and watch some ads and get the file decryption key.",

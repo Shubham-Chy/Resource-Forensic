@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect, useRef } from 'react';
 import { Resource, ResourceCategory, CATEGORY_JP, MirrorLink } from '../types';
 import { getResources, saveResource, deleteResource, updateResource } from '../data/resources';
@@ -15,8 +14,9 @@ const AdminDashboard: React.FC<{ onLogout: () => void }> = ({ onLogout }) => {
   const [showKey, setShowKey] = useState(false);
   const [showDownload, setShowDownload] = useState(true);
 
-  // Multiple Drive Links State
+  // Multiple Links State
   const [driveLinks, setDriveLinks] = useState<MirrorLink[]>([{ label: 'GOOGLE DRIVE', url: '' }]);
+  const [keyLinks, setKeyLinks] = useState<MirrorLink[]>([{ label: 'ACCESS KEY', url: '' }]);
 
   // Form State
   const [formData, setFormData] = useState<Partial<Resource>>({
@@ -48,6 +48,7 @@ const AdminDashboard: React.FC<{ onLogout: () => void }> = ({ onLogout }) => {
     setShowKey(false);
     setShowDownload(true);
     setDriveLinks([{ label: 'GOOGLE DRIVE', url: '' }]);
+    setKeyLinks([{ label: 'ACCESS KEY', url: '' }]);
     setFormError(null);
   };
 
@@ -56,10 +57,10 @@ const AdminDashboard: React.FC<{ onLogout: () => void }> = ({ onLogout }) => {
     setFormData(resource);
     setShowYoutube(!!resource.youtubeId);
     setShowDrive(!!resource.driveUrl || (!!resource.driveLinks && resource.driveLinks.length > 0));
-    setShowKey(!!resource.getKeyUrl);
+    setShowKey(!!resource.getKeyUrl || (!!resource.keyLinks && resource.keyLinks.length > 0));
     setShowDownload(!!resource.downloadUrl);
 
-    // Populate drive mirrors from legacy or new field
+    // Populate drive mirrors
     if (resource.driveLinks && resource.driveLinks.length > 0) {
       setDriveLinks(resource.driveLinks);
     } else if (resource.driveUrl) {
@@ -68,21 +69,32 @@ const AdminDashboard: React.FC<{ onLogout: () => void }> = ({ onLogout }) => {
       setDriveLinks([{ label: 'GOOGLE DRIVE', url: '' }]);
     }
 
+    // Populate key mirrors
+    if (resource.keyLinks && resource.keyLinks.length > 0) {
+      setKeyLinks(resource.keyLinks);
+    } else if (resource.getKeyUrl) {
+      setKeyLinks([{ label: 'ACCESS KEY', url: resource.getKeyUrl }]);
+    } else {
+      setKeyLinks([{ label: 'ACCESS KEY', url: '' }]);
+    }
+
     setActiveTab('add');
   };
 
-  const addDriveLink = () => {
-    setDriveLinks([...driveLinks, { label: `MIRROR_${driveLinks.length + 1}`, url: '' }]);
-  };
-
-  const removeDriveLink = (index: number) => {
-    setDriveLinks(driveLinks.filter((_, i) => i !== index));
-  };
-
+  const addDriveLink = () => setDriveLinks([...driveLinks, { label: `MIRROR_${driveLinks.length + 1}`, url: '' }]);
+  const removeDriveLink = (index: number) => setDriveLinks(driveLinks.filter((_, i) => i !== index));
   const updateDriveLink = (index: number, field: keyof MirrorLink, value: string) => {
     const updated = [...driveLinks];
     updated[index][field] = value;
     setDriveLinks(updated);
+  };
+
+  const addKeyLink = () => setKeyLinks([...keyLinks, { label: `KEY_${keyLinks.length + 1}`, url: '' }]);
+  const removeKeyLink = (index: number) => setKeyLinks(keyLinks.filter((_, i) => i !== index));
+  const updateKeyLink = (index: number, field: keyof MirrorLink, value: string) => {
+    const updated = [...keyLinks];
+    updated[index][field] = value;
+    setKeyLinks(updated);
   };
 
   const handleSubmit = (e: React.FormEvent) => {
@@ -95,11 +107,12 @@ const AdminDashboard: React.FC<{ onLogout: () => void }> = ({ onLogout }) => {
     }
 
     const validDriveLinks = driveLinks.filter(l => l.url.trim());
+    const validKeyLinks = keyLinks.filter(l => l.url.trim());
     const hasActiveLink = 
       (showDownload && formData.downloadUrl?.trim()) || 
       (showYoutube && formData.youtubeId?.trim()) || 
       (showDrive && validDriveLinks.length > 0) || 
-      (showKey && formData.getKeyUrl?.trim());
+      (showKey && validKeyLinks.length > 0);
 
     if (!hasActiveLink) {
       setFormError('FAILURE: NO_ACTIVE_ACCESS_ENDPOINT');
@@ -116,17 +129,24 @@ const AdminDashboard: React.FC<{ onLogout: () => void }> = ({ onLogout }) => {
       };
       
       if (!showYoutube) delete dataToSave.youtubeId;
-      if (!showKey) delete dataToSave.getKeyUrl;
       if (!showDownload) delete dataToSave.downloadUrl;
 
       // Handle Drive links
       if (showDrive && validDriveLinks.length > 0) {
         dataToSave.driveLinks = validDriveLinks;
-        // Keep driveUrl for backward compatibility (pointing to first link)
         dataToSave.driveUrl = validDriveLinks[0].url;
       } else {
         delete dataToSave.driveUrl;
         delete dataToSave.driveLinks;
+      }
+
+      // Handle Key links
+      if (showKey && validKeyLinks.length > 0) {
+        dataToSave.keyLinks = validKeyLinks;
+        dataToSave.getKeyUrl = validKeyLinks[0].url;
+      } else {
+        delete dataToSave.getKeyUrl;
+        delete dataToSave.keyLinks;
       }
 
       let updated;
@@ -472,15 +492,45 @@ export const deleteResource = (id: string) => {
                     </div>
                   )}
                   {showKey && (
-                    <div className="space-y-3">
-                      <label className="text-[8px] md:text-[9px] uppercase tracking-[0.3em] md:tracking-[0.5em] opacity-40 font-black ml-1 text-white">Encryption_Key_Source</label>
-                      <input 
-                        required={showKey}
-                        className="w-full bg-white/[0.05] border border-white/30 p-4 md:p-5 text-sm outline-none transition-all tracking-[0.1em] text-white focus:border-white"
-                        placeholder="HTTPS://GET_KEY_URL"
-                        value={formData.getKeyUrl || ''}
-                        onChange={e => setFormData({...formData, getKeyUrl: e.target.value})}
-                      />
+                    <div className="space-y-4">
+                      <div className="flex justify-between items-center">
+                        <label className="text-[8px] md:text-[9px] uppercase tracking-[0.3em] md:tracking-[0.5em] opacity-40 font-black ml-1 text-white">Access_Protocols (GET_KEY_URLS)</label>
+                        <button 
+                          type="button" 
+                          onClick={addKeyLink}
+                          className="text-[8px] tracking-[0.2em] font-black uppercase text-blue-400 hover:text-blue-300 transition-colors"
+                        >
+                          + ADD_PROTOCOL
+                        </button>
+                      </div>
+                      <div className="space-y-3">
+                        {keyLinks.map((link, idx) => (
+                          <div key={idx} className="flex flex-col sm:flex-row gap-2 animate-in slide-in-from-left-2 duration-300">
+                            <input 
+                              className="w-full sm:w-1/3 bg-white/[0.05] border border-white/30 p-4 text-[10px] outline-none tracking-widest text-white/50 focus:border-white font-black"
+                              placeholder="LABEL (e.g., KEY_1)"
+                              value={link.label}
+                              onChange={e => updateKeyLink(idx, 'label', e.target.value.toUpperCase())}
+                            />
+                            <input 
+                              required={showKey}
+                              className="w-full bg-white/[0.05] border border-white/30 p-4 text-sm outline-none tracking-[0.1em] text-white focus:border-white"
+                              placeholder="HTTPS://GET_KEY_URL"
+                              value={link.url}
+                              onChange={e => updateKeyLink(idx, 'url', e.target.value)}
+                            />
+                            {keyLinks.length > 1 && (
+                              <button 
+                                type="button" 
+                                onClick={() => removeKeyLink(idx)}
+                                className="p-4 bg-red-600/10 border border-red-600/30 text-red-500 hover:bg-red-600 hover:text-white transition-all"
+                              >
+                                <svg width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeWidth={2} d="M6 18L18 6M6 6l12 12" /></svg>
+                              </button>
+                            )}
+                          </div>
+                        ))}
+                      </div>
                     </div>
                   )}
                 </div>
