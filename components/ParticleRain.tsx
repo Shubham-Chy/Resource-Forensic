@@ -40,26 +40,26 @@ const ParticleRain: React.FC<ParticleRainProps> = ({ isDarkMode = true }) => {
       constructor() {
         this.x = Math.random() * canvas!.width;
         this.y = Math.random() * canvas!.height;
-        this.w = 6 + Math.random() * 8;
-        this.h = 4 + Math.random() * 4;
-        this.opacity = Math.random() * 0.5 + 0.2;
+        this.w = 5 + Math.random() * 7;
+        this.h = 3 + Math.random() * 4;
+        this.opacity = Math.random() * 0.3 + 0.1;
         this.flip = Math.random();
-        this.flipSpeed = Math.random() * 0.03;
-        this.horizontalSpeed = Math.random() * 2 - 1;
-        this.verticalSpeed = 1 + Math.random() * 1.5;
+        this.flipSpeed = Math.random() * 0.015; // Slower flipping
+        this.horizontalSpeed = Math.random() * 0.6 - 0.3; // Gentle horizontal drift
+        this.verticalSpeed = 0.4 + Math.random() * 0.7; // Significantly slower falling
         this.rotation = Math.random() * Math.PI;
-        this.rotationSpeed = Math.random() * 0.02;
+        this.rotationSpeed = Math.random() * 0.01; // Slower rotation
         
-        // Sakura shades: Soft pinks and whites
+        // Forensic shades: Pure white and various grays
         const colors = isDarkMode 
-          ? ['rgba(255, 182, 193, ', 'rgba(255, 255, 255, ', 'rgba(255, 218, 224, ']
-          : ['rgba(255, 105, 180, ', 'rgba(255, 182, 193, ', 'rgba(255, 192, 203, '];
+          ? ['rgba(255, 255, 255, ', 'rgba(200, 200, 200, ', 'rgba(150, 150, 150, ']
+          : ['rgba(255, 255, 255, ', 'rgba(220, 220, 220, ', 'rgba(180, 180, 180, '];
         this.color = colors[Math.floor(Math.random() * colors.length)];
       }
 
       update() {
         this.y += this.verticalSpeed;
-        this.x += this.horizontalSpeed + Math.sin(this.flip) * 0.5;
+        this.x += this.horizontalSpeed + Math.sin(this.flip) * 0.3;
         this.flip += this.flipSpeed;
         this.rotation += this.rotationSpeed;
 
@@ -79,7 +79,7 @@ const ParticleRain: React.FC<ParticleRainProps> = ({ isDarkMode = true }) => {
         ctx.scale(Math.sin(this.flip), 1);
         
         ctx.beginPath();
-        // Drawing a petal shape (teardrop/heart-like)
+        // Sakura petal geometry
         ctx.moveTo(0, 0);
         ctx.bezierCurveTo(this.w / 2, -this.h, this.w, 0, 0, this.h);
         ctx.bezierCurveTo(-this.w, 0, -this.w / 2, -this.h, 0, 0);
@@ -91,7 +91,8 @@ const ParticleRain: React.FC<ParticleRainProps> = ({ isDarkMode = true }) => {
     }
 
     const initPetals = () => {
-      const count = Math.floor((canvas.width * canvas.height) / 12000);
+      // Reduced quantity: divisor increased to 35000 from 12000
+      const count = Math.floor((canvas.width * canvas.height) / 35000);
       petals = Array.from({ length: count }, () => new Petal());
     };
 
