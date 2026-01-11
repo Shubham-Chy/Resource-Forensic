@@ -21,15 +21,21 @@ export const CATEGORY_JP: Record<string, string> = {
   'Anime Clips': 'アニメクリップ'
 };
 
+export interface MirrorLink {
+  label: string;
+  url: string;
+}
+
 export interface Resource {
   id: string;
   name: string;
   category: ResourceCategory;
   description: string;
   thumbnail: string;
-  downloadUrl?: string; // Made optional to support toggleable fields
+  downloadUrl?: string;
   youtubeId?: string;
-  driveUrl?: string;
+  driveUrl?: string; // Legacy field for single link
+  driveLinks?: MirrorLink[]; // New field for multiple mirrors
   getKeyUrl?: string;
   createdAt?: number;
 }

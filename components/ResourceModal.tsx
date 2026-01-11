@@ -1,5 +1,6 @@
-import React, { useEffect, useState } from 'react';
-import { Resource, ResourceCategory, CATEGORY_JP } from '../types';
+
+import React, { useEffect, useState, useRef } from 'react';
+import { Resource, ResourceCategory, CATEGORY_JP, MirrorLink } from '../types';
 
 interface ResourceModalProps {
   resource: Resource | null;
@@ -10,33 +11,54 @@ interface ResourceModalProps {
 const ResourceModal: React.FC<ResourceModalProps> = ({ resource, onClose, isDarkMode = true }) => {
   const [isVisible, setIsVisible] = useState(false);
   const [shouldRender, setShouldRender] = useState(false);
+  const [isMirrorMenuOpen, setIsMirrorMenuOpen] = useState(false);
+  const mirrorMenuRef = useRef<HTMLDivElement>(null);
 
   // Manage mount/unmount lifecycle for transitions
   useEffect(() => {
     if (resource) {
       setShouldRender(true);
-      // Small delay to trigger entry transition
       const timer = setTimeout(() => setIsVisible(true), 10);
       return () => clearTimeout(timer);
     } else {
-      // If resource is null, we handle exit elsewhere, 
-      // but this ensures state resets if parent forces close.
       setIsVisible(false);
+      setIsMirrorMenuOpen(false);
     }
   }, [resource]);
 
+  useEffect(() => {
+    const handleClickOutside = (e: MouseEvent) => {
+      if (mirrorMenuRef.current && !mirrorMenuRef.current.contains(e.target as Node)) {
+        setIsMirrorMenuOpen(false);
+      }
+    };
+    if (isMirrorMenuOpen) {
+      window.addEventListener('mousedown', handleClickOutside);
+    }
+    return () => window.removeEventListener('mousedown', handleClickOutside);
+  }, [isMirrorMenuOpen]);
+
   const handleCloseTrigger = () => {
     setIsVisible(false);
-    // Wait for the longest transition (800ms for backdrop) before unmounting
     setTimeout(() => {
       setShouldRender(false);
       onClose();
     }, 700); 
   };
 
+  const handleDriveAction = (e: React.MouseEvent) => {
+    const mirrors = resource?.driveLinks || [];
+    if (mirrors.length > 1) {
+      e.preventDefault();
+      setIsMirrorMenuOpen(!isMirrorMenuOpen);
+    }
+  };
+
   if (!resource || !shouldRender) return null;
 
   const isAnimeClip = resource.category === ResourceCategory.ANIME_CLIPS;
+  const driveMirrors = resource.driveLinks || (resource.driveUrl ? [{ label: 'GOOGLE DRIVE', url: resource.driveUrl }] : []);
+  const hasMultipleMirrors = driveMirrors.length > 1;
 
   return (
     <div className="fixed inset-0 z-[5000] flex items-center justify-center p-0 md:p-8">
@@ -108,19 +130,47 @@ const ResourceModal: React.FC<ResourceModalProps> = ({ resource, onClose, isDark
             </p>
           </div>
 
-          <div className="flex flex-col gap-4 md:gap-5 mt-auto">
+          <div className="flex flex-col gap-4 md:gap-5 mt-auto relative">
             {isAnimeClip ? (
               <div className="grid grid-cols-1 gap-3 md:gap-5">
-                <a 
-                  id="download-btn"
-                  href={resource.driveUrl} 
-                  target="_blank" 
-                  rel="noopener noreferrer"
-                  className={`clickable group relative flex items-center justify-center py-4 md:py-5 px-6 md:px-10 font-black tracking-[0.4em] md:tracking-[0.6em] text-[9px] md:text-[11px] overflow-hidden transition-all duration-500 active:scale-[0.98] ${isDarkMode ? 'bg-white text-black' : 'bg-black text-white'}`}
-                >
-                  <span className="relative z-10">ストレージ DRIVE ARCHIVE</span>
-                  <div className={`absolute inset-0 translate-y-full group-hover:translate-y-0 transition-transform duration-500 ${isDarkMode ? 'bg-zinc-200' : 'bg-zinc-800'}`} />
-                </a>
+                <div className="relative" ref={mirrorMenuRef}>
+                  <a 
+                    id="download-btn"
+                    href={hasMultipleMirrors ? undefined : driveMirrors[0]?.url} 
+                    target="_blank" 
+                    rel="noopener noreferrer"
+                    onClick={handleDriveAction}
+                    className={`clickable group relative flex items-center justify-center py-4 md:py-5 px-6 md:px-10 font-black tracking-[0.4em] md:tracking-[0.6em] text-[9px] md:text-[11px] overflow-hidden transition-all duration-500 active:scale-[0.98] ${isDarkMode ? 'bg-white text-black' : 'bg-black text-white'}`}
+                  >
+                    <span className="relative z-10 flex items-center gap-3">
+                      ストレージ DRIVE ARCHIVE
+                      {hasMultipleMirrors && (
+                        <svg className={`w-3 h-3 transition-transform duration-300 ${isMirrorMenuOpen ? 'rotate-180' : ''}`} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={3}><path d="M19 9l-7 7-7-7"/></svg>
+                      )}
+                    </span>
+                    <div className={`absolute inset-0 translate-y-full group-hover:translate-y-0 transition-transform duration-500 ${isDarkMode ? 'bg-zinc-200' : 'bg-zinc-800'}`} />
+                  </a>
+
+                  {/* Mirrors Menu */}
+                  {isMirrorMenuOpen && (
+                    <div className={`absolute bottom-full left-0 w-full mb-2 border p-1 shadow-2xl animate-in slide-in-from-bottom-2 duration-300 z-50 ${isDarkMode ? 'bg-zinc-950 border-white/20' : 'bg-white border-black/20'}`}>
+                      <div className="text-[7px] tracking-[0.4em] uppercase font-black opacity-20 p-3 border-b border-white/5">Select_Cloud_Mirror</div>
+                      {driveMirrors.map((m, idx) => (
+                        <a 
+                          key={idx}
+                          href={m.url}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          onClick={() => setIsMirrorMenuOpen(false)}
+                          className={`clickable block w-full text-left p-4 text-[9px] tracking-[0.3em] font-black uppercase transition-all ${isDarkMode ? 'hover:bg-white hover:text-black' : 'hover:bg-black hover:text-white'}`}
+                        >
+                          // {m.label}
+                        </a>
+                      ))}
+                    </div>
+                  )}
+                </div>
+                
                 <a 
                   id="download-btn"
                   href={resource.getKeyUrl} 

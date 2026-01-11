@@ -1,5 +1,6 @@
+
 import React, { useState, useEffect, useRef } from 'react';
-import { Resource, ResourceCategory, CATEGORY_JP } from '../types';
+import { Resource, ResourceCategory, CATEGORY_JP, MirrorLink } from '../types';
 import { getResources, saveResource, deleteResource, updateResource } from '../data/resources';
 
 const AdminDashboard: React.FC<{ onLogout: () => void }> = ({ onLogout }) => {
@@ -13,6 +14,9 @@ const AdminDashboard: React.FC<{ onLogout: () => void }> = ({ onLogout }) => {
   const [showDrive, setShowDrive] = useState(false);
   const [showKey, setShowKey] = useState(false);
   const [showDownload, setShowDownload] = useState(true);
+
+  // Multiple Drive Links State
+  const [driveLinks, setDriveLinks] = useState<MirrorLink[]>([{ label: 'GOOGLE DRIVE', url: '' }]);
 
   // Form State
   const [formData, setFormData] = useState<Partial<Resource>>({
@@ -43,6 +47,7 @@ const AdminDashboard: React.FC<{ onLogout: () => void }> = ({ onLogout }) => {
     setShowDrive(false);
     setShowKey(false);
     setShowDownload(true);
+    setDriveLinks([{ label: 'GOOGLE DRIVE', url: '' }]);
     setFormError(null);
   };
 
@@ -50,10 +55,34 @@ const AdminDashboard: React.FC<{ onLogout: () => void }> = ({ onLogout }) => {
     setEditingId(resource.id);
     setFormData(resource);
     setShowYoutube(!!resource.youtubeId);
-    setShowDrive(!!resource.driveUrl);
+    setShowDrive(!!resource.driveUrl || (!!resource.driveLinks && resource.driveLinks.length > 0));
     setShowKey(!!resource.getKeyUrl);
     setShowDownload(!!resource.downloadUrl);
+
+    // Populate drive mirrors from legacy or new field
+    if (resource.driveLinks && resource.driveLinks.length > 0) {
+      setDriveLinks(resource.driveLinks);
+    } else if (resource.driveUrl) {
+      setDriveLinks([{ label: 'GOOGLE DRIVE', url: resource.driveUrl }]);
+    } else {
+      setDriveLinks([{ label: 'GOOGLE DRIVE', url: '' }]);
+    }
+
     setActiveTab('add');
+  };
+
+  const addDriveLink = () => {
+    setDriveLinks([...driveLinks, { label: `MIRROR_${driveLinks.length + 1}`, url: '' }]);
+  };
+
+  const removeDriveLink = (index: number) => {
+    setDriveLinks(driveLinks.filter((_, i) => i !== index));
+  };
+
+  const updateDriveLink = (index: number, field: keyof MirrorLink, value: string) => {
+    const updated = [...driveLinks];
+    updated[index][field] = value;
+    setDriveLinks(updated);
   };
 
   const handleSubmit = (e: React.FormEvent) => {
@@ -65,10 +94,11 @@ const AdminDashboard: React.FC<{ onLogout: () => void }> = ({ onLogout }) => {
       return;
     }
 
+    const validDriveLinks = driveLinks.filter(l => l.url.trim());
     const hasActiveLink = 
       (showDownload && formData.downloadUrl?.trim()) || 
       (showYoutube && formData.youtubeId?.trim()) || 
-      (showDrive && formData.driveUrl?.trim()) || 
+      (showDrive && validDriveLinks.length > 0) || 
       (showKey && formData.getKeyUrl?.trim());
 
     if (!hasActiveLink) {
@@ -86,9 +116,18 @@ const AdminDashboard: React.FC<{ onLogout: () => void }> = ({ onLogout }) => {
       };
       
       if (!showYoutube) delete dataToSave.youtubeId;
-      if (!showDrive) delete dataToSave.driveUrl;
       if (!showKey) delete dataToSave.getKeyUrl;
       if (!showDownload) delete dataToSave.downloadUrl;
+
+      // Handle Drive links
+      if (showDrive && validDriveLinks.length > 0) {
+        dataToSave.driveLinks = validDriveLinks;
+        // Keep driveUrl for backward compatibility (pointing to first link)
+        dataToSave.driveUrl = validDriveLinks[0].url;
+      } else {
+        delete dataToSave.driveUrl;
+        delete dataToSave.driveLinks;
+      }
 
       let updated;
       if (editingId) {
@@ -391,15 +430,45 @@ export const deleteResource = (id: string) => {
                     </div>
                   )}
                   {showDrive && (
-                    <div className="space-y-3">
-                      <label className="text-[8px] md:text-[9px] uppercase tracking-[0.3em] md:tracking-[0.5em] opacity-40 font-black ml-1 text-white">Cloud_Repository_URL</label>
-                      <input 
-                        required={showDrive}
-                        className="w-full bg-white/[0.05] border border-white/30 p-4 md:p-5 text-sm outline-none transition-all tracking-[0.1em] text-white focus:border-white"
-                        placeholder="HTTPS://DRIVE_CLOUD_LINK"
-                        value={formData.driveUrl || ''}
-                        onChange={e => setFormData({...formData, driveUrl: e.target.value})}
-                      />
+                    <div className="space-y-4">
+                      <div className="flex justify-between items-center">
+                        <label className="text-[8px] md:text-[9px] uppercase tracking-[0.3em] md:tracking-[0.5em] opacity-40 font-black ml-1 text-white">Cloud_Mirrors (DRIVE_SOURCES)</label>
+                        <button 
+                          type="button" 
+                          onClick={addDriveLink}
+                          className="text-[8px] tracking-[0.2em] font-black uppercase text-blue-400 hover:text-blue-300 transition-colors"
+                        >
+                          + ADD_ENDPOINT
+                        </button>
+                      </div>
+                      <div className="space-y-3">
+                        {driveLinks.map((link, idx) => (
+                          <div key={idx} className="flex flex-col sm:flex-row gap-2 animate-in slide-in-from-left-2 duration-300">
+                            <input 
+                              className="w-full sm:w-1/3 bg-white/[0.05] border border-white/30 p-4 text-[10px] outline-none tracking-widest text-white/50 focus:border-white font-black"
+                              placeholder="LABEL (e.g., MEGA)"
+                              value={link.label}
+                              onChange={e => updateDriveLink(idx, 'label', e.target.value.toUpperCase())}
+                            />
+                            <input 
+                              required={showDrive}
+                              className="w-full bg-white/[0.05] border border-white/30 p-4 text-sm outline-none tracking-[0.1em] text-white focus:border-white"
+                              placeholder="HTTPS://CLOUD_LINK"
+                              value={link.url}
+                              onChange={e => updateDriveLink(idx, 'url', e.target.value)}
+                            />
+                            {driveLinks.length > 1 && (
+                              <button 
+                                type="button" 
+                                onClick={() => removeDriveLink(idx)}
+                                className="p-4 bg-red-600/10 border border-red-600/30 text-red-500 hover:bg-red-600 hover:text-white transition-all"
+                              >
+                                <svg width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeWidth={2} d="M6 18L18 6M6 6l12 12" /></svg>
+                              </button>
+                            )}
+                          </div>
+                        ))}
+                      </div>
                     </div>
                   )}
                   {showKey && (
