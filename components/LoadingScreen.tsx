@@ -20,7 +20,10 @@ const LoadingScreen: React.FC<{ onComplete: () => void }> = ({ onComplete }) => 
   }, [onComplete]);
 
   return (
-    <div className="fixed inset-0 z-[10000] bg-black flex flex-col items-center justify-center">
+    <div 
+      data-forensic-overlay="loading"
+      className="fixed inset-0 z-[10000] bg-black flex flex-col items-center justify-center"
+    >
       <div className="autography text-6xl md:text-8xl text-white mb-8 animate-pulse">
         Resource Forensic
       </div>

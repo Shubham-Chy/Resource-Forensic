@@ -201,7 +201,7 @@ export const deleteResource = (id: string) => {
   const maxCount = Math.max(...statsByCategory.map(s => s.count), 1);
 
   return (
-    <div className="min-h-screen bg-[#050505] text-white p-4 md:p-12 font-mono selection:bg-white selection:text-black relative overflow-x-hidden">
+    <div id="admin-dashboard-area" className="min-h-screen bg-[#050505] text-white p-4 md:p-12 font-mono selection:bg-white selection:text-black relative overflow-x-hidden">
       <div className="max-w-6xl mx-auto relative z-10">
         
         {/* Terminal Header */}

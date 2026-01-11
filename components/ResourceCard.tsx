@@ -1,6 +1,5 @@
-
 import React from 'react';
-import { Resource, ResourceCategory, CATEGORY_JP } from '../types';
+import { Resource, CATEGORY_JP } from '../types';
 
 interface ResourceCardProps {
   resource: Resource;
@@ -11,6 +10,7 @@ interface ResourceCardProps {
 const ResourceCard: React.FC<ResourceCardProps> = ({ resource, onClick, isDarkMode = true }) => {
   return (
     <div 
+      id="resource-card"
       onClick={() => onClick(resource)}
       className={`clickable relative group w-full max-w-[560px] aspect-[16/9] flex flex-col overflow-hidden rounded-sm cursor-none transition-all duration-700 cubic-bezier(0.23, 1, 0.32, 1) hover:scale-[1.03] shadow-2xl border ${isDarkMode ? 'border-white/5 bg-zinc-950 shadow-black/80' : 'border-black/5 bg-zinc-100 shadow-black/10'}`}
     >
