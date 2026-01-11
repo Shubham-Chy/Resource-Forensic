@@ -8,8 +8,26 @@ import { Resource, ResourceCategory } from '../types';
 const INITIAL_RESOURCES: Resource[] = [
   {
     "category": "Software",
+    "description": "Free Download Adobe After Effects CC Pre-Activated offline installer for Windows.",
+    "downloadUrl": "https://work.ink/2bBx/after-effect-2023",
+    "thumbnail": "https://i.ibb.co/N6gYLx8r/Adobe-After-Effects.webp",
+    "name": "After Effect - 2023",
+    "id": "res-1768124145604",
+    "createdAt": 1768124145604
+  },
+  {
+    "category": "Software",
+    "name": "After Effect - 2025",
+    "description": "Free Download Adobe After Effects CC Pre-Activated offline installer for Windows.",
+    "thumbnail": "https://i.ibb.co/N6gYLx8r/Adobe-After-Effects.webp",
+    "downloadUrl": "https://work.ink/2bBx/after-effect-2025",
+    "id": "res-1768124006650",
+    "createdAt": 1768124006650
+  },
+  {
+    "category": "Software",
     "name": "After Effect - 2024",
-    "thumbnail": "https://i.ibb.co/FkKS6Nc8/image.webp",
+    "thumbnail": "https://i.ibb.co/N6gYLx8r/Adobe-After-Effects.webp",
     "description": "Free Download Adobe After Effects CC Pre-Activated offline installer for Windows.",
     "downloadUrl": "https://work.ink/2bBx/after-effect-2024",
     "id": "res-1768042729258",
