@@ -7,6 +7,35 @@ import { Resource, ResourceCategory } from '../types';
  */
 const INITIAL_RESOURCES: Resource[] = [
   {
+    "category": "Anime Clips",
+    "name": "Suzume",
+    "description": "We are providing free clips resources to editors at 4k quality for free of cost and we just ask u to not use any adblocker and watch some ads and get the file decryption key.",
+    "thumbnail": "https://i.ibb.co/1tkqhKv2/e-K-Zk-GSo9-ZQ-HD-1.jpg",
+    "getKeyUrl": "https://work.ink/2bBx/suzume",
+    "youtubeId": "eK_ZkGSo9ZQ",
+    "id": "res-1768130967497",
+    "createdAt": 1768130967497,
+    "driveLinks": [
+      {
+        "label": "MEGA DRIVE 1",
+        "url": "https://mega.nz/folder/W9g0hTyL"
+      },
+      {
+        "label": "MEGA DRIVE 2",
+        "url": "https://mega.nz/folder/wjomFKIA"
+      },
+      {
+        "label": "MEGA DRIVE 3",
+        "url": "https://mega.nz/folder/oigUBQDC"
+      },
+      {
+        "label": "MEGA DRIVE 4",
+        "url": "https://mega.nz/folder/SU0h1bqS"
+      }
+    ],
+    "driveUrl": "https://mega.nz/folder/W9g0hTyL"
+  },
+  {
     "category": "Software",
     "description": "Free Download Adobe After Effects CC Pre-Activated offline installer for Windows.",
     "downloadUrl": "https://work.ink/2bBx/after-effect-2023",
