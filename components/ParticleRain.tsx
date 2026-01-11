@@ -1,7 +1,5 @@
-
 import React, { useEffect, useRef } from 'react';
 
-// Fix: Define props interface to include isDarkMode
 interface ParticleRainProps {
   isDarkMode?: boolean;
 }
@@ -17,58 +15,89 @@ const ParticleRain: React.FC<ParticleRainProps> = ({ isDarkMode = true }) => {
     if (!ctx) return;
 
     let animationFrameId: number;
-    let particles: Particle[] = [];
+    let petals: Petal[] = [];
 
     const resize = () => {
       canvas.width = window.innerWidth;
       canvas.height = window.innerHeight;
-      initParticles();
+      initPetals();
     };
 
-    class Particle {
+    class Petal {
       x: number;
       y: number;
-      length: number;
-      speed: number;
+      w: number;
+      h: number;
       opacity: number;
+      flip: number;
+      flipSpeed: number;
+      horizontalSpeed: number;
+      verticalSpeed: number;
+      rotation: number;
+      rotationSpeed: number;
+      color: string;
 
       constructor() {
         this.x = Math.random() * canvas!.width;
         this.y = Math.random() * canvas!.height;
-        this.length = Math.random() * 20 + 10;
-        this.speed = Math.random() * 3 + 2;
-        this.opacity = Math.random() * 0.15 + 0.05;
+        this.w = 6 + Math.random() * 8;
+        this.h = 4 + Math.random() * 4;
+        this.opacity = Math.random() * 0.5 + 0.2;
+        this.flip = Math.random();
+        this.flipSpeed = Math.random() * 0.03;
+        this.horizontalSpeed = Math.random() * 2 - 1;
+        this.verticalSpeed = 1 + Math.random() * 1.5;
+        this.rotation = Math.random() * Math.PI;
+        this.rotationSpeed = Math.random() * 0.02;
+        
+        // Sakura shades: Soft pinks and whites
+        const colors = isDarkMode 
+          ? ['rgba(255, 182, 193, ', 'rgba(255, 255, 255, ', 'rgba(255, 218, 224, ']
+          : ['rgba(255, 105, 180, ', 'rgba(255, 182, 193, ', 'rgba(255, 192, 203, '];
+        this.color = colors[Math.floor(Math.random() * colors.length)];
       }
 
       update() {
-        this.y += this.speed;
+        this.y += this.verticalSpeed;
+        this.x += this.horizontalSpeed + Math.sin(this.flip) * 0.5;
+        this.flip += this.flipSpeed;
+        this.rotation += this.rotationSpeed;
+
         if (this.y > canvas!.height) {
-          this.y = -this.length;
+          this.y = -20;
           this.x = Math.random() * canvas!.width;
         }
+        if (this.x > canvas!.width) this.x = 0;
+        if (this.x < 0) this.x = canvas!.width;
       }
 
       draw() {
         if (!ctx) return;
+        ctx.save();
+        ctx.translate(this.x, this.y);
+        ctx.rotate(this.rotation);
+        ctx.scale(Math.sin(this.flip), 1);
+        
         ctx.beginPath();
-        // Fix: Adjust particle color based on theme
-        const color = isDarkMode ? '255, 255, 255' : '0, 0, 0';
-        ctx.strokeStyle = `rgba(${color}, ${this.opacity})`;
-        ctx.lineWidth = 1;
-        ctx.moveTo(this.x, this.y);
-        ctx.lineTo(this.x, this.y + this.length);
-        ctx.stroke();
+        // Drawing a petal shape (teardrop/heart-like)
+        ctx.moveTo(0, 0);
+        ctx.bezierCurveTo(this.w / 2, -this.h, this.w, 0, 0, this.h);
+        ctx.bezierCurveTo(-this.w, 0, -this.w / 2, -this.h, 0, 0);
+        
+        ctx.fillStyle = `${this.color}${this.opacity})`;
+        ctx.fill();
+        ctx.restore();
       }
     }
 
-    const initParticles = () => {
-      const count = Math.floor((canvas.width * canvas.height) / 15000);
-      particles = Array.from({ length: count }, () => new Particle());
+    const initPetals = () => {
+      const count = Math.floor((canvas.width * canvas.height) / 12000);
+      petals = Array.from({ length: count }, () => new Petal());
     };
 
     const animate = () => {
       ctx.clearRect(0, 0, canvas.width, canvas.height);
-      particles.forEach((p) => {
+      petals.forEach((p) => {
         p.update();
         p.draw();
       });
@@ -83,13 +112,13 @@ const ParticleRain: React.FC<ParticleRainProps> = ({ isDarkMode = true }) => {
       window.removeEventListener('resize', resize);
       cancelAnimationFrame(animationFrameId);
     };
-  }, [isDarkMode]); // Re-initialize on theme change
+  }, [isDarkMode]);
 
   return (
     <canvas
       ref={canvasRef}
       className="fixed inset-0 pointer-events-none z-[1]"
-      style={{ mixBlendMode: isDarkMode ? 'screen' : 'multiply' }}
+      style={{ mixBlendMode: 'normal' }}
     />
   );
 };

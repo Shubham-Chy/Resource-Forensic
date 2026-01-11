@@ -37,6 +37,14 @@
             transition: background-color 0.8s cubic-bezier(0.4, 0, 0.2, 1);
         }
 
+        /* Essential: Allow selection in interactive terminals/inputs only */
+        input, textarea, [contenteditable="true"] {
+            -webkit-user-select: text !important;
+            -moz-user-select: text !important;
+            -ms-user-select: text !important;
+            user-select: text !important;
+        }
+
         ::-webkit-scrollbar {
             width: 3px;
         }
@@ -115,7 +123,7 @@
   }
 }
 </script>
-  <script type="module" crossorigin src="/assets/index-BC7TcUlq.js"></script>
+  <script type="module" crossorigin src="/assets/index-B9xhKlLK.js"></script>
   <link rel="modulepreload" crossorigin href="/assets/vendor-DF3nNwgj.js">
 </head>
 <body>

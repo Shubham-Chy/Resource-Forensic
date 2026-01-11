@@ -30,17 +30,37 @@ const App: React.FC = () => {
     }
 
     const handleKeyDown = (e: KeyboardEvent) => {
+      // Forensic Search Shortcut
       if ((e.metaKey || e.ctrlKey) && e.key === 'k') {
         e.preventDefault();
         setIsSearchOpen(true);
       }
+      
+      // Global Security: Block dev-tool shortcuts
+      if ((e.metaKey || e.ctrlKey) && (e.key === 'u' || e.key === 's')) {
+        e.preventDefault();
+      }
+      if ((e.metaKey || e.ctrlKey) && e.shiftKey && (e.key === 'I' || e.key === 'J' || e.key === 'C')) {
+        e.preventDefault();
+      }
+
       if (e.key === 'Escape') {
         setIsSearchOpen(false);
         setSelectedResource(null);
       }
     };
+
+    const handleContextMenu = (e: MouseEvent) => {
+      e.preventDefault();
+    };
+
     window.addEventListener('keydown', handleKeyDown);
-    return () => window.removeEventListener('keydown', handleKeyDown);
+    window.addEventListener('contextmenu', handleContextMenu);
+    
+    return () => {
+      window.removeEventListener('keydown', handleKeyDown);
+      window.removeEventListener('contextmenu', handleContextMenu);
+    };
   }, []);
 
   useEffect(() => {
