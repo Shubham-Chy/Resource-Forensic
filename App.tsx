@@ -21,8 +21,8 @@ const App: React.FC = () => {
   const [isSearchOpen, setIsSearchOpen] = useState(false);
   const [isSweeping, setIsSweeping] = useState(false);
   const [isDarkMode, setIsDarkMode] = useState(true);
-  
-  // Ref to track if audio has already been played to ensure it only plays once
+
+  // Ref to track if audio has already been played to ensure it only plays once on entry
   const hasPlayedAudio = useRef(false);
 
   useEffect(() => {
@@ -93,8 +93,12 @@ const App: React.FC = () => {
     
     // One-time audio trigger on site entry
     if (!hasPlayedAudio.current) {
-      const audio = new Audio('/voice_note.mp3');
-      audio.play().catch(err => console.debug("Audio playback prevented by browser:", err));
+      // Using new URL ensures Vite bundles the asset into the dist folder correctly
+      const audioUrl = new URL('./voice_note.mp3', import.meta.url).href;
+      const audio = new Audio(audioUrl);
+      audio.play().catch(err => {
+        console.debug("Audio playback prevented by browser policy. Interaction required.", err);
+      });
       hasPlayedAudio.current = true;
     }
   };
