@@ -9,11 +9,35 @@ const INITIAL_RESOURCES: Resource[] = [
     "category": "Anime Clips",
     "name": "Jujutsu Kaisen",
     "thumbnail": "https://i.ibb.co/v4TM1dNx/512px-Jujutsu-Kaisen-Japanese-logo-svg.webp",
-    "description": "Coming Soon!",
+    "description": "Welcome to the ultimate editing hub for Jujutsu Kaisen. Built for editors, we provide high-quality, upscaled, and raw JJK clips—100% free for creative use.",
     "id": "res-1768189001252",
     "createdAt": 1768189001252,
-    "isUpcoming": true,
-    "isSeasonBased": false
+    "isUpcoming": false,
+    "isSeasonBased": true,
+    "seasons": [
+      {
+        "id": "s-1768202154751",
+        "label": "SEASON 3",
+        "episodes": [
+          {
+            "id": "e-1768202156125",
+            "number": "1",
+            "driveLinks": [
+              {
+                "label": "MEGA DRIVE",
+                "url": "https://mega.nz/folder/ZnByWQCR"
+              }
+            ],
+            "keyLinks": [
+              {
+                "label": "GET KEY",
+                "url": "https://work.ink/2bBx/jujutsu-kaisen-s03ep01"
+              }
+            ]
+          }
+        ]
+      }
+    ]
   },
   {
     "category": "Software",
