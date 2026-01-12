@@ -7,7 +7,7 @@ import { Resource, ResourceCategory } from '../types';
  */
 const INITIAL_RESOURCES: Resource[] = [
   {
-    "category": "Software",
+    "category": "Software" as any,
     "name": "Premiere Pro - 2025",
     "description": "Free Download Adobe Premiere Pro Pre-Activated offline installer for Windows.",
     "thumbnail": "https://i.ibb.co/tpbDbbN9/premiere-pro.webp",
@@ -16,7 +16,7 @@ const INITIAL_RESOURCES: Resource[] = [
     "createdAt": 1768144076610
   },
   {
-    "category": "Anime Clips",
+    "category": "Anime Clips" as any,
     "name": "Suzume",
     "description": "We are providing free clips resources to editors at 4k quality for free of cost and we just ask u to not use any adblocker and watch some ads and get the file decryption key.",
     "thumbnail": "https://i.ibb.co/1tkqhKv2/e-K-Zk-GSo9-ZQ-HD-1.jpg",
@@ -45,7 +45,7 @@ const INITIAL_RESOURCES: Resource[] = [
     "driveUrl": "https://mega.nz/folder/W9g0hTyL"
   },
   {
-    "category": "Software",
+    "category": "Software" as any,
     "description": "Free Download Adobe After Effects CC Pre-Activated offline installer for Windows.",
     "downloadUrl": "https://work.ink/2bBx/after-effect-2023",
     "thumbnail": "https://i.ibb.co/N6gYLx8r/Adobe-After-Effects.webp",
@@ -54,7 +54,7 @@ const INITIAL_RESOURCES: Resource[] = [
     "createdAt": 1768124145604
   },
   {
-    "category": "Software",
+    "category": "Software" as any,
     "name": "After Effect - 2025",
     "description": "Free Download Adobe After Effects CC Pre-Activated offline installer for Windows.",
     "thumbnail": "https://i.ibb.co/N6gYLx8r/Adobe-After-Effects.webp",
@@ -63,7 +63,7 @@ const INITIAL_RESOURCES: Resource[] = [
     "createdAt": 1768124006650
   },
   {
-    "category": "Software",
+    "category": "Software" as any,
     "name": "After Effect - 2024",
     "thumbnail": "https://i.ibb.co/N6gYLx8r/Adobe-After-Effects.webp",
     "description": "Free Download Adobe After Effects CC Pre-Activated offline installer for Windows.",
@@ -72,7 +72,7 @@ const INITIAL_RESOURCES: Resource[] = [
     "createdAt": 1768042729258
   },
   {
-    "category": "Anime Clips",
+    "category": "Anime Clips" as any,
     "name": "Chainsaw Man - Reze Arc",
     "youtubeId": "OvN4MXnW2Qw",
     "driveUrl": "https://mega.nz/folder/xJciFQJB",
@@ -82,7 +82,7 @@ const INITIAL_RESOURCES: Resource[] = [
     "id": "res-1768039688845",
     "createdAt": 1768039688845
   }
-] as any;
+] as Resource[];
 
 const STORAGE_KEY = 'resource_forensic_vault';
 

@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { Resource, ResourceCategory, CATEGORY_JP, MirrorLink } from '../types';
+import { Resource, ResourceCategory, CATEGORY_JP, MirrorLink, Season, Episode } from '../types';
 import { getResources, saveResource, deleteResource, updateResource } from '../data/resources';
 
 const AdminDashboard: React.FC<{ onLogout: () => void }> = ({ onLogout }) => {
@@ -13,8 +13,13 @@ const AdminDashboard: React.FC<{ onLogout: () => void }> = ({ onLogout }) => {
   const [showDrive, setShowDrive] = useState(false);
   const [showKey, setShowKey] = useState(false);
   const [showDownload, setShowDownload] = useState(true);
+  const [isUpcoming, setIsUpcoming] = useState(false);
 
-  // Multiple Links State
+  // Anime-Specific Modality
+  const [isSeasonBased, setIsSeasonBased] = useState(false);
+  const [seasons, setSeasons] = useState<Season[]>([]);
+
+  // Mirror Lists for standard resources
   const [driveLinks, setDriveLinks] = useState<MirrorLink[]>([{ label: 'GOOGLE DRIVE', url: '' }]);
   const [keyLinks, setKeyLinks] = useState<MirrorLink[]>([{ label: 'ACCESS KEY', url: '' }]);
 
@@ -47,6 +52,9 @@ const AdminDashboard: React.FC<{ onLogout: () => void }> = ({ onLogout }) => {
     setShowDrive(false);
     setShowKey(false);
     setShowDownload(true);
+    setIsUpcoming(false);
+    setIsSeasonBased(false);
+    setSeasons([]);
     setDriveLinks([{ label: 'GOOGLE DRIVE', url: '' }]);
     setKeyLinks([{ label: 'ACCESS KEY', url: '' }]);
     setFormError(null);
@@ -56,45 +64,55 @@ const AdminDashboard: React.FC<{ onLogout: () => void }> = ({ onLogout }) => {
     setEditingId(resource.id);
     setFormData(resource);
     setShowYoutube(!!resource.youtubeId);
-    setShowDrive(!!resource.driveUrl || (!!resource.driveLinks && resource.driveLinks.length > 0));
-    setShowKey(!!resource.getKeyUrl || (!!resource.keyLinks && resource.keyLinks.length > 0));
     setShowDownload(!!resource.downloadUrl);
+    setIsUpcoming(!!resource.isUpcoming);
+    setIsSeasonBased(!!resource.isSeasonBased);
 
-    // Populate drive mirrors
-    if (resource.driveLinks && resource.driveLinks.length > 0) {
-      setDriveLinks(resource.driveLinks);
-    } else if (resource.driveUrl) {
-      setDriveLinks([{ label: 'GOOGLE DRIVE', url: resource.driveUrl }]);
+    if (resource.isSeasonBased) {
+      setSeasons(resource.seasons || []);
+      setShowDrive(false);
+      setShowKey(false);
     } else {
-      setDriveLinks([{ label: 'GOOGLE DRIVE', url: '' }]);
-    }
+      setShowDrive(!!resource.driveUrl || (!!resource.driveLinks && resource.driveLinks.length > 0));
+      setShowKey(!!resource.getKeyUrl || (!!resource.keyLinks && resource.keyLinks.length > 0));
+      
+      if (resource.driveLinks && resource.driveLinks.length > 0) {
+        setDriveLinks(resource.driveLinks);
+      } else if (resource.driveUrl) {
+        setDriveLinks([{ label: 'GOOGLE DRIVE', url: resource.driveUrl }]);
+      }
 
-    // Populate key mirrors
-    if (resource.keyLinks && resource.keyLinks.length > 0) {
-      setKeyLinks(resource.keyLinks);
-    } else if (resource.getKeyUrl) {
-      setKeyLinks([{ label: 'ACCESS KEY', url: resource.getKeyUrl }]);
-    } else {
-      setKeyLinks([{ label: 'ACCESS KEY', url: '' }]);
+      if (resource.keyLinks && resource.keyLinks.length > 0) {
+        setKeyLinks(resource.keyLinks);
+      } else if (resource.getKeyUrl) {
+        setKeyLinks([{ label: 'ACCESS KEY', url: resource.getKeyUrl }]);
+      }
     }
 
     setActiveTab('add');
   };
 
-  const addDriveLink = () => setDriveLinks([...driveLinks, { label: `MIRROR_${driveLinks.length + 1}`, url: '' }]);
-  const removeDriveLink = (index: number) => setDriveLinks(driveLinks.filter((_, i) => i !== index));
-  const updateDriveLink = (index: number, field: keyof MirrorLink, value: string) => {
-    const updated = [...driveLinks];
-    updated[index][field] = value;
-    setDriveLinks(updated);
+  const addSeason = () => {
+    setSeasons([...seasons, { id: `s-${Date.now()}`, label: `SEASON ${seasons.length + 1}`, episodes: [] }]);
   };
 
-  const addKeyLink = () => setKeyLinks([...keyLinks, { label: `KEY_${keyLinks.length + 1}`, url: '' }]);
-  const removeKeyLink = (index: number) => setKeyLinks(keyLinks.filter((_, i) => i !== index));
-  const updateKeyLink = (index: number, field: keyof MirrorLink, value: string) => {
-    const updated = [...keyLinks];
-    updated[index][field] = value;
-    setKeyLinks(updated);
+  const addEpisode = (seasonId: string) => {
+    setSeasons(seasons.map(s => s.id === seasonId ? {
+      ...s,
+      episodes: [...s.episodes, { 
+        id: `e-${Date.now()}`, 
+        number: `${s.episodes.length + 1}`, 
+        driveLinks: [{ label: 'DRIVE_1', url: '' }],
+        keyLinks: [{ label: 'ACCESS_1', url: '' }]
+      }]
+    } : s));
+  };
+
+  const handleDelete = (id: string) => {
+    if (window.confirm('CRITICAL_ACTION: PERMANENTLY_ERASE_DATA?')) {
+      const updated = deleteResource(id);
+      setResources(updated);
+    }
   };
 
   const handleSubmit = (e: React.FormEvent) => {
@@ -106,47 +124,45 @@ const AdminDashboard: React.FC<{ onLogout: () => void }> = ({ onLogout }) => {
       return;
     }
 
-    const validDriveLinks = driveLinks.filter(l => l.url.trim());
-    const validKeyLinks = keyLinks.filter(l => l.url.trim());
-    const hasActiveLink = 
-      (showDownload && formData.downloadUrl?.trim()) || 
-      (showYoutube && formData.youtubeId?.trim()) || 
-      (showDrive && validDriveLinks.length > 0) || 
-      (showKey && validKeyLinks.length > 0);
-
-    if (!hasActiveLink) {
-      setFormError('FAILURE: NO_ACTIVE_ACCESS_ENDPOINT');
-      return;
-    }
-
     setIsSubmitting(true);
     
     setTimeout(() => {
       const dataToSave: Resource = {
         ...formData as Resource,
         id: editingId || `res-${Date.now()}`,
-        createdAt: formData.createdAt || Date.now()
+        createdAt: formData.createdAt || Date.now(),
+        isUpcoming: isUpcoming,
+        isSeasonBased: formData.category === ResourceCategory.ANIME_CLIPS ? isSeasonBased : false
       };
       
       if (!showYoutube) delete dataToSave.youtubeId;
       if (!showDownload) delete dataToSave.downloadUrl;
 
-      // Handle Drive links
-      if (showDrive && validDriveLinks.length > 0) {
-        dataToSave.driveLinks = validDriveLinks;
-        dataToSave.driveUrl = validDriveLinks[0].url;
-      } else {
+      if (dataToSave.isSeasonBased) {
+        dataToSave.seasons = seasons;
         delete dataToSave.driveUrl;
         delete dataToSave.driveLinks;
-      }
-
-      // Handle Key links
-      if (showKey && validKeyLinks.length > 0) {
-        dataToSave.keyLinks = validKeyLinks;
-        dataToSave.getKeyUrl = validKeyLinks[0].url;
-      } else {
         delete dataToSave.getKeyUrl;
         delete dataToSave.keyLinks;
+      } else {
+        const validDriveLinks = driveLinks.filter(l => l.url.trim());
+        const validKeyLinks = keyLinks.filter(l => l.url.trim());
+        
+        if (showDrive && validDriveLinks.length > 0) {
+          dataToSave.driveLinks = validDriveLinks;
+          dataToSave.driveUrl = validDriveLinks[0].url;
+        } else {
+          delete dataToSave.driveUrl;
+          delete dataToSave.driveLinks;
+        }
+
+        if (showKey && validKeyLinks.length > 0) {
+          dataToSave.keyLinks = validKeyLinks;
+          dataToSave.getKeyUrl = validKeyLinks[0].url;
+        } else {
+          delete dataToSave.getKeyUrl;
+          delete dataToSave.keyLinks;
+        }
       }
 
       let updated;
@@ -163,13 +179,6 @@ const AdminDashboard: React.FC<{ onLogout: () => void }> = ({ onLogout }) => {
     }, 1000);
   };
 
-  const handleDelete = (id: string) => {
-    if (confirm('DANGER: DELETE FROM ARCHIVE PERMANENTLY?')) {
-      const updated = deleteResource(id);
-      setResources(updated);
-    }
-  };
-
   const generateDeploymentCode = () => {
     const resourcesJson = JSON.stringify(resources, null, 2);
     return `import { Resource, ResourceCategory } from '../types';
@@ -177,7 +186,6 @@ const AdminDashboard: React.FC<{ onLogout: () => void }> = ({ onLogout }) => {
 /**
  * PRODUCTION ARCHIVE DATA
  * Auto-generated by Resource Forensic Admin Panel
- * Note: 'as any' is used to satisfy TS when enum values are literals in JSON.
  */
 const INITIAL_RESOURCES: Resource[] = ${resourcesJson} as any;
 
@@ -218,491 +226,385 @@ export const deleteResource = (id: string) => {
   const copyDeploymentCode = () => {
     const code = generateDeploymentCode();
     navigator.clipboard.writeText(code);
-    alert('CODE_COPIED: Replace the content of data/resources.ts with this code. Commit and Push to GitHub to update globally.');
+    alert('CODE_COPIED: Replace the content of data/resources.ts with this code. Commit and Push to GitHub.');
   };
 
   const exportArchive = () => {
     const dataStr = JSON.stringify(resources, null, 2);
     const dataUri = 'data:application/json;charset=utf-8,'+ encodeURIComponent(dataStr);
-    const exportFileDefaultName = `resource_forensic_archive_${new Date().toISOString().split('T')[0]}.json`;
     const linkElement = document.createElement('a');
     linkElement.setAttribute('href', dataUri);
-    linkElement.setAttribute('download', exportFileDefaultName);
+    linkElement.setAttribute('download', `forensic_archive_${new Date().toISOString().slice(0,10)}.json`);
     linkElement.click();
   };
 
   const handleImport = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) return;
-
     const reader = new FileReader();
     reader.onload = (event) => {
       try {
-        const importedData = JSON.parse(event.target?.result as string);
-        if (Array.isArray(importedData)) {
-          if (confirm(`RESTORE_PROTOCOL: THIS WILL OVERWRITE ${resources.length} EXISTING ENTRIES WITH ${importedData.length} NEW ENTRIES. PROCEED?`)) {
-            localStorage.setItem('resource_forensic_vault', JSON.stringify(importedData));
-            setResources(importedData);
-          }
+        const imported = JSON.parse(event.target?.result as string);
+        if (Array.isArray(imported)) {
+          localStorage.setItem('resource_forensic_vault', JSON.stringify(imported));
+          setResources(imported);
+          alert('RESTORE_PROTOCOL_COMPLETE');
         }
-      } catch (err) {
-        alert('FAILURE: ARCHIVE_CORRUPTION_DETECTED');
-      }
+      } catch (err) { alert('RESTORE_FAILURE: CORRUPT_JSON'); }
     };
     reader.readAsText(file);
   };
-
-  const categories = Object.values(ResourceCategory);
-  const statsByCategory = categories.map(cat => ({
-    name: cat,
-    count: resources.filter(r => r.category === cat).length
-  }));
-  const maxCount = Math.max(...statsByCategory.map(s => s.count), 1);
 
   return (
     <div id="admin-dashboard-area" className="min-h-screen bg-[#050505] text-white p-4 md:p-12 font-mono selection:bg-white selection:text-black relative overflow-x-hidden">
       <div className="max-w-6xl mx-auto relative z-10">
         
-        {/* Terminal Header */}
-        <div className="flex flex-col md:flex-row justify-between items-start md:items-end mb-10 md:mb-16 gap-6 border-b border-white/5 pb-8">
+        {/* Header */}
+        <div className="flex flex-col md:flex-row justify-between items-start md:items-end mb-12 gap-6 border-b border-white/5 pb-8">
           <div>
             <div className="flex items-center gap-3 mb-1">
               <div className="w-2 h-2 bg-red-600 rounded-full animate-pulse shadow-[0_0_8px_rgba(220,38,38,0.5)]" />
-              <h1 className="text-base md:text-xl font-black tracking-[0.4em] uppercase">Control_Center</h1>
+              <h1 className="text-xl font-black tracking-[0.4em] uppercase">Control_Center</h1>
             </div>
-            <p className="text-[8px] md:text-[9px] opacity-20 tracking-[0.2em] uppercase font-black">Archive_Index_v9.1 // GitHub_Sync: Ready</p>
+            <p className="text-[9px] opacity-20 tracking-[0.2em] uppercase font-black">Archive_Management_Interface</p>
           </div>
-          <div className="flex items-center gap-6 md:gap-10 overflow-x-auto no-scrollbar w-full md:w-auto pb-2 md:pb-0">
-             <button onClick={() => { setActiveTab('stats'); resetForm(); }} className={`text-[8px] md:text-[9px] tracking-[0.3em] md:tracking-[0.4em] uppercase font-black transition-all whitespace-nowrap ${activeTab === 'stats' ? 'opacity-100' : 'opacity-20 hover:opacity-50'}`}>Telemetry</button>
-             <button onClick={() => setActiveTab('add')} className={`text-[8px] md:text-[9px] tracking-[0.3em] md:tracking-[0.4em] uppercase font-black transition-all whitespace-nowrap ${activeTab === 'add' ? 'opacity-100' : 'opacity-20 hover:opacity-50'}`}>
-                {editingId ? 'Maintenance' : 'Ingestion'}
+          <div className="flex items-center gap-10 overflow-x-auto no-scrollbar w-full md:w-auto">
+             <button onClick={() => { setActiveTab('stats'); resetForm(); }} className={`text-[10px] tracking-[0.4em] uppercase font-black transition-all ${activeTab === 'stats' ? 'opacity-100' : 'opacity-20 hover:opacity-50'}`}>Telemetry</button>
+             <button onClick={() => setActiveTab('add')} className={`text-[10px] tracking-[0.4em] uppercase font-black transition-all ${activeTab === 'add' ? 'opacity-100' : 'opacity-20 hover:opacity-50'}`}>Ingestion</button>
+             <button onClick={() => { setActiveTab('manage'); resetForm(); }} className={`text-[10px] tracking-[0.4em] uppercase font-black transition-all ${activeTab === 'manage' ? 'opacity-100' : 'opacity-20 hover:opacity-50'}`}>Registry</button>
+             <div className="h-4 w-[1px] bg-white/10 mx-2 hidden md:block" />
+             <button 
+                onClick={onLogout} 
+                className="clickable group px-6 py-2 border border-red-600/10 hover:border-red-600/40 bg-red-600/5 transition-all rounded-sm flex items-center justify-center"
+             >
+                <span className="text-[10px] tracking-[0.4em] uppercase font-black text-red-600">SIGN_OUT</span>
              </button>
-             <button onClick={() => { setActiveTab('manage'); resetForm(); }} className={`text-[8px] md:text-[9px] tracking-[0.3em] md:tracking-[0.4em] uppercase font-black transition-all whitespace-nowrap ${activeTab === 'manage' ? 'opacity-100' : 'opacity-20 hover:opacity-50'}`}>Registry</button>
-             <div className="hidden md:block w-[1px] h-4 bg-white/10" />
-             <button onClick={onLogout} className="text-[8px] md:text-[9px] tracking-[0.3em] md:tracking-[0.4em] uppercase font-black opacity-30 hover:opacity-100 hover:text-red-500 transition-all border border-white/5 px-3 md:px-4 py-1.5 whitespace-nowrap">Sign_Out</button>
           </div>
         </div>
 
-        {/* Views */}
-        <div className="animate-in fade-in duration-500">
-          {activeTab === 'stats' && (
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6 md:gap-8">
-               <div className="md:col-span-2 border border-white/5 bg-white/[0.01] p-6 md:p-10 h-[30rem] md:h-80 relative overflow-hidden group">
-                  <div className="absolute inset-0 opacity-[0.02] bg-[length:24px_24px] [background-image:linear-gradient(to_right,white_1px,transparent_1px),linear-gradient(to_bottom,white_1px,transparent_1px)]" />
-                  <div className="relative z-10 h-full flex flex-col">
-                     <span className="text-[8px] opacity-20 tracking-widest uppercase mb-auto font-black">Archive_Distribution_Map</span>
-                     <div className="flex items-end gap-3 md:gap-6 h-48 mt-8">
-                        {statsByCategory.map(s => (
-                           <div key={s.name} className="flex-1 flex flex-col items-center group/bar">
-                              <div 
-                                className="w-full bg-white/5 group-hover/bar:bg-white/20 transition-all duration-1000 border-t border-x border-white/10"
-                                style={{ height: `${(s.count / maxCount) * 100}%` }}
-                              />
-                              <span className="text-[6px] md:text-[7px] opacity-20 mt-3 vertical-text uppercase tracking-[0.3em] md:tracking-[0.4em] font-black h-16 md:h-20 transition-all group-hover/bar:opacity-100 whitespace-nowrap">{s.name}</span>
-                           </div>
-                        ))}
-                     </div>
-                  </div>
-               </div>
-               <div className="space-y-6">
-                  <div className="border border-white/5 bg-white/[0.02] p-6 md:p-8 group">
-                     <span className="text-[8px] opacity-20 tracking-widest uppercase font-black">Archive_Count</span>
-                     <div className="text-4xl md:text-6xl font-black mt-2 tracking-tighter group-hover:scale-[1.02] transition-transform">{resources.length}</div>
-                  </div>
-                  <div className="border border-white/5 bg-white/[0.02] p-6 md:p-8 group">
-                     <span className="text-[8px] opacity-20 tracking-widest uppercase font-black">Security_Status</span>
-                     <div className="text-2xl md:text-3xl font-black mt-2 tracking-tighter text-green-500/60">NOMINAL</div>
-                  </div>
-               </div>
-            </div>
-          )}
-
-          {activeTab === 'add' && (
-            <form onSubmit={handleSubmit} className="max-w-4xl mx-auto space-y-8 md:space-y-12 pb-32">
-              {editingId && (
-                <div className="flex items-center justify-between p-4 border border-blue-500/20 bg-blue-500/5 rounded-sm">
-                   <div className="flex items-center gap-3">
-                      <div className="w-2 h-2 bg-blue-500 rounded-full animate-pulse" />
-                      <span className="text-[10px] tracking-[0.3em] font-black uppercase text-blue-400">MAINTENANCE_MODE_ACTIVE // EDITING: {editingId}</span>
-                   </div>
-                   <button 
-                    type="button" 
-                    onClick={resetForm}
-                    className="text-[8px] tracking-[0.2em] uppercase font-black opacity-40 hover:opacity-100 underline"
-                   >
-                     ABORT_MAINTENANCE
-                   </button>
-                </div>
-              )}
-
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6 md:gap-10">
-                <div className="space-y-3">
-                  <label className="text-[8px] md:text-[9px] uppercase tracking-[0.3em] md:tracking-[0.5em] opacity-30 font-black ml-1">Asset_Name</label>
-                  <input 
-                    required 
-                    className="w-full bg-white/[0.03] border border-white/10 p-4 md:p-5 text-sm focus:border-white/40 outline-none transition-all placeholder:opacity-10 tracking-[0.1em] text-white"
-                    placeholder="ENTER_ITEM_TITLE"
-                    value={formData.name || ''}
-                    onChange={e => setFormData({...formData, name: e.target.value})}
-                  />
-                </div>
-
-                <div className="space-y-3" ref={categoryRef}>
-                  <label className="text-[8px] md:text-[9px] uppercase tracking-[0.3em] md:tracking-[0.5em] opacity-30 font-black ml-1">Archive_Sector</label>
-                  <div className="relative">
-                    <button 
-                      type="button"
-                      onClick={() => setIsCategoryOpen(!isCategoryOpen)}
-                      className="w-full bg-white/[0.03] border border-white/10 p-4 md:p-5 text-sm text-left focus:border-white/40 outline-none transition-all uppercase tracking-[0.2em] flex justify-between items-center"
-                    >
-                      {formData.category}
-                      <svg className={`w-4 h-4 transition-transform duration-300 ${isCategoryOpen ? 'rotate-180' : 'rotate-0'}`} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={3}><path d="M19 9l-7 7-7-7"/></svg>
-                    </button>
-                    {isCategoryOpen && (
-                      <div className="absolute z-50 top-full left-0 w-full mt-2 bg-[#0a0a0a] border border-white/20 shadow-2xl max-h-72 overflow-y-auto no-scrollbar">
-                        {categories.map(cat => (
-                          <button
-                            key={cat}
-                            type="button"
-                            onClick={() => {
-                              setFormData({...formData, category: cat});
-                              setIsCategoryOpen(false);
-                            }}
-                            className="w-full text-left p-5 text-[11px] tracking-[0.2em] uppercase hover:bg-white hover:text-black transition-colors font-bold"
-                          >
-                            {cat}
-                          </button>
-                        ))}
+        {activeTab === 'stats' && (
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8 animate-in fade-in duration-700">
+             <div className="md:col-span-2 border border-white/5 bg-white/[0.01] p-10 h-80 relative overflow-hidden group">
+                <span className="text-[8px] opacity-20 tracking-widest uppercase font-black">Archive_Volume_Distribution</span>
+                <div className="flex items-end gap-6 h-48 mt-10">
+                  {Object.values(ResourceCategory).map(cat => {
+                    const count = resources.filter(r => r.category === cat).length;
+                    return (
+                      <div key={cat} className="flex-1 flex flex-col items-center">
+                         <div className="w-full bg-white/5 border-t border-x border-white/10 transition-all duration-1000" style={{ height: `${(count / (resources.length || 1)) * 100}%` }} />
+                         <span className="text-[6px] opacity-20 mt-4 vertical-text uppercase tracking-widest">{cat}</span>
                       </div>
-                    )}
-                  </div>
+                    );
+                  })}
                 </div>
-              </div>
+             </div>
+             <div className="space-y-6">
+                <div className="border border-white/5 bg-white/[0.02] p-8">
+                   <span className="text-[8px] opacity-20 uppercase font-black">TOTAL_ASSETS</span>
+                   <div className="text-6xl font-black mt-2 tracking-tighter">{resources.length}</div>
+                </div>
+                <div className="border border-white/5 bg-white/[0.02] p-8">
+                   <span className="text-[8px] opacity-20 uppercase font-black">SYSTEM_STATUS</span>
+                   <div className="text-2xl font-black mt-2 tracking-widest text-green-500">NOMINAL</div>
+                </div>
+             </div>
+          </div>
+        )}
 
+        {activeTab === 'add' && (
+          <form onSubmit={handleSubmit} className="max-w-4xl mx-auto space-y-12 pb-32 animate-in fade-in duration-700">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-10">
               <div className="space-y-3">
-                <label className="text-[8px] md:text-[9px] uppercase tracking-[0.3em] md:tracking-[0.5em] opacity-30 font-black ml-1">Data_Background</label>
-                <textarea 
-                  required 
-                  className="w-full bg-white/[0.03] border border-white/10 p-4 md:p-5 text-sm focus:border-white/40 outline-none transition-all h-32 tracking-widest placeholder:opacity-10 resize-none"
-                  placeholder="METADATA_DESCRIPTION_FOR_ARCHIVE..."
-                  value={formData.description || ''}
-                  onChange={e => setFormData({...formData, description: e.target.value})}
-                />
+                <label className="text-[9px] uppercase tracking-[0.5em] opacity-30 font-black ml-1">Asset_Name</label>
+                <input required className="w-full bg-white/[0.03] border border-white/10 p-5 text-sm focus:border-white/40 outline-none text-white font-black uppercase tracking-widest" value={formData.name || ''} onChange={e => setFormData({...formData, name: e.target.value})} />
               </div>
-
-              <div className="space-y-3">
-                <label className="text-[8px] md:text-[9px] uppercase tracking-[0.3em] md:tracking-[0.5em] opacity-30 font-black ml-1">Cover_Thumbnail_Source</label>
-                <input 
-                  required 
-                  className="w-full bg-white/[0.03] border border-white/10 p-4 md:p-5 text-sm focus:border-white/40 outline-none transition-all tracking-[0.1em]"
-                  placeholder="HTTPS://IMAGE_ENDPOINT_URL"
-                  value={formData.thumbnail || ''}
-                  onChange={e => setFormData({...formData, thumbnail: e.target.value})}
-                />
-              </div>
-
-              <div className="pt-8 border-t border-white/5 space-y-8">
-                 <div className="flex flex-col gap-3">
-                    <span className="text-[8px] uppercase tracking-[0.4em] md:tracking-[0.6em] opacity-20 font-black mb-2">Endpoint_Configuration</span>
-                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-                      {[
-                        { id: 'dl', label: 'Download_Link', state: showDownload, set: setShowDownload },
-                        { id: 'yt', label: 'YouTube_Embed', state: showYoutube, set: setShowYoutube },
-                        { id: 'dr', label: 'Drive_Source', state: showDrive, set: setShowDrive },
-                        { id: 'ky', label: 'Access_Protocol', state: showKey, set: setShowKey },
-                      ].map(t => (
-                        <button
-                          key={t.id}
-                          type="button"
-                          onClick={() => t.set(!t.state)}
-                          className={`clickable px-4 md:px-6 py-3 border text-[8px] md:text-[9px] tracking-[0.2em] md:tracking-[0.3em] font-black uppercase transition-all flex items-center gap-3 ${t.state ? 'bg-white text-black border-white' : 'opacity-20 border-white/10 hover:opacity-60'}`}
+              <div className="space-y-3" ref={categoryRef}>
+                <label className="text-[9px] uppercase tracking-[0.5em] opacity-30 font-black ml-1">Archive_Sector</label>
+                <div className="relative">
+                  <button 
+                    type="button" 
+                    onClick={() => setIsCategoryOpen(!isCategoryOpen)} 
+                    className={`w-full bg-white/[0.03] border border-white/10 p-5 text-sm text-left uppercase tracking-[0.2em] flex justify-between items-center transition-all ${isCategoryOpen ? 'border-white/40' : ''}`}
+                  >
+                    <span className="font-black">{formData.category}</span>
+                    <svg className={`w-3 h-3 transition-transform duration-300 ${isCategoryOpen ? 'rotate-180' : ''}`} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={3}><path d="M19 9l-7 7-7-7"/></svg>
+                  </button>
+                  {isCategoryOpen && (
+                    <div className="absolute z-50 top-full left-0 w-full mt-2 bg-black border border-white/10 shadow-2xl animate-in slide-in-from-top-2 duration-200">
+                      {Object.values(ResourceCategory).map(cat => (
+                        <button 
+                          key={cat} 
+                          type="button" 
+                          onClick={() => { setFormData({...formData, category: cat}); setIsCategoryOpen(false); }} 
+                          className="w-full text-left p-5 text-[11px] uppercase tracking-widest hover:bg-white hover:text-black transition-colors font-black"
                         >
-                          <div className={`w-2 h-2 rounded-full ${t.state ? 'bg-black animate-pulse' : 'bg-white/40'}`} />
-                          {t.label}
+                          {cat}
                         </button>
                       ))}
                     </div>
-                 </div>
+                  )}
+                </div>
+              </div>
+            </div>
 
-                <div className="space-y-6 md:space-y-8 animate-in fade-in slide-in-from-top-4 duration-500">
-                  {showDownload && (
-                    <div className="space-y-3">
-                      <label className="text-[8px] md:text-[9px] uppercase tracking-[0.3em] md:tracking-[0.5em] opacity-40 font-black ml-1 text-white">Direct_Download_Path</label>
-                      <input 
-                        required={showDownload}
-                        className="w-full bg-white/[0.05] border border-white/30 p-4 md:p-5 text-sm outline-none transition-all tracking-[0.1em] text-white focus:border-white"
-                        placeholder="HTTPS://DIRECT_ASSET_SOURCE"
-                        value={formData.downloadUrl || ''}
-                        onChange={e => setFormData({...formData, downloadUrl: e.target.value})}
-                      />
-                    </div>
-                  )}
-                  {showYoutube && (
-                    <div className="space-y-3">
-                      <label className="text-[8px] md:text-[9px] uppercase tracking-[0.3em] md:tracking-[0.5em] opacity-40 font-black ml-1 text-white">Video_Archive_ID</label>
-                      <input 
-                        required={showYoutube}
-                        className="w-full bg-white/[0.05] border border-white/30 p-4 md:p-5 text-sm outline-none transition-all tracking-[0.1em] text-white focus:border-white"
-                        placeholder="YOUTUBE_ID (e.g., dQw4w9WgXcQ)"
-                        value={formData.youtubeId || ''}
-                        onChange={e => setFormData({...formData, youtubeId: e.target.value})}
-                      />
-                    </div>
-                  )}
+            {formData.category === ResourceCategory.ANIME_CLIPS && (
+              <div className="space-y-4 border border-white/10 p-6 bg-white/[0.02] animate-in slide-in-from-top-4 duration-500">
+                <span className="text-[8px] uppercase tracking-[0.6em] opacity-20 font-black mb-4 block">Modality_Selection</span>
+                <div className="grid grid-cols-2 gap-4">
+                  <button type="button" onClick={() => setIsSeasonBased(false)} className={`py-4 border text-[9px] font-black uppercase tracking-widest transition-all ${!isSeasonBased ? 'bg-white text-black' : 'opacity-20 border-white/10'}`}>MOVIE_TYPE</button>
+                  <button type="button" onClick={() => setIsSeasonBased(true)} className={`py-4 border text-[9px] font-black uppercase tracking-widest transition-all ${isSeasonBased ? 'bg-white text-black' : 'opacity-20 border-white/10'}`}>SEASON_TYPE</button>
+                </div>
+              </div>
+            )}
+
+            <div className="space-y-3">
+              <label className="text-[9px] uppercase tracking-[0.5em] opacity-30 font-black ml-1">Data_Background</label>
+              <textarea required className="w-full bg-white/[0.03] border border-white/10 p-5 text-sm h-32 outline-none text-white tracking-widest resize-none" value={formData.description || ''} onChange={e => setFormData({...formData, description: e.target.value})} />
+            </div>
+
+            <div className="space-y-3">
+              <label className="text-[9px] uppercase tracking-[0.5em] opacity-30 font-black ml-1">Thumbnail_Endpoint</label>
+              <input required className="w-full bg-white/[0.03] border border-white/10 p-5 text-sm outline-none text-white tracking-[0.1em]" value={formData.thumbnail || ''} onChange={e => setFormData({...formData, thumbnail: e.target.value})} />
+            </div>
+
+            {/* Anime Hierarchy Builder */}
+            {formData.category === ResourceCategory.ANIME_CLIPS && isSeasonBased ? (
+              <div className="pt-8 border-t border-white/5 space-y-12">
+                 <div className="flex justify-between items-center">
+                   <span className="text-[9px] uppercase tracking-[0.6em] opacity-20 font-black">Sequential_Archive_Builder</span>
+                   <button type="button" onClick={addSeason} className="text-[10px] font-black uppercase bg-white text-black px-10 py-4 hover:bg-zinc-200">+ ADD_SEASON</button>
+                 </div>
+                 <div className="space-y-12">
+                   {seasons.map((season, sIdx) => (
+                     <div key={season.id} className="border border-white/10 bg-white/[0.02] p-8 space-y-8 animate-in fade-in duration-500">
+                       <div className="flex justify-between border-b border-white/5 pb-4 items-center">
+                          <input className="bg-transparent border-none text-2xl font-black uppercase tracking-[0.2em] outline-none w-full" value={season.label} onChange={e => {
+                             const updated = [...seasons];
+                             updated[sIdx].label = e.target.value.toUpperCase();
+                             setSeasons(updated);
+                          }} placeholder="SEASON_NAME" />
+                          <button 
+                            type="button" 
+                            onClick={() => setSeasons(seasons.filter(s => s.id !== season.id))}
+                            className="clickable w-10 h-10 border border-red-600/20 bg-red-600/5 hover:bg-red-600 hover:text-white flex items-center justify-center transition-all flex-shrink-0"
+                          >
+                            <svg width="18" height="18" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}><path d="M6 18L18 6M6 6l12 12" /></svg>
+                          </button>
+                       </div>
+                       <div className="space-y-6">
+                         {season.episodes.map((ep, eIdx) => (
+                           <div key={ep.id} className="border border-dashed border-white/10 p-6 bg-black/40 space-y-6">
+                             <div className="flex justify-between items-center">
+                               <div className="flex items-center gap-4">
+                                 <span className="text-[10px] opacity-20 font-black uppercase tracking-widest">SEGMENT:</span>
+                                 <input className="bg-white/5 border border-white/10 p-2 text-xs w-20 text-center font-black" value={ep.number} onChange={e => {
+                                    const updated = [...seasons]; updated[sIdx].episodes[eIdx].number = e.target.value; setSeasons(updated);
+                                 }} />
+                               </div>
+                               <button 
+                                 type="button" 
+                                 onClick={() => {
+                                   const updated = [...seasons]; updated[sIdx].episodes = updated[sIdx].episodes.filter(epi => epi.id !== ep.id); setSeasons(updated);
+                                 }}
+                                 className="clickable w-8 h-8 border border-red-600/20 bg-red-600/5 hover:bg-red-600 hover:text-white flex items-center justify-center transition-all"
+                               >
+                                 <svg width="14" height="14" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={3}><path d="M6 18L18 6M6 6l12 12" /></svg>
+                               </button>
+                             </div>
+                             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                               <div className="space-y-3">
+                                 <span className="text-[8px] opacity-30 uppercase font-black tracking-widest">DRIVE_NODES</span>
+                                 {ep.driveLinks.map((dl, dlIdx) => (
+                                   <div key={dlIdx} className="flex gap-2">
+                                     <input className="bg-white/5 border border-white/10 p-3 text-[8px] w-24 font-black" placeholder="LABEL" value={dl.label} onChange={e => {
+                                        const updated = [...seasons]; updated[sIdx].episodes[eIdx].driveLinks[dlIdx].label = e.target.value.toUpperCase(); setSeasons(updated);
+                                     }} />
+                                     <input className="bg-white/5 border border-white/10 p-3 text-[8px] flex-1" placeholder="URL" value={dl.url} onChange={e => {
+                                        const updated = [...seasons]; updated[sIdx].episodes[eIdx].driveLinks[dlIdx].url = e.target.value; setSeasons(updated);
+                                     }} />
+                                   </div>
+                                 ))}
+                                 <button type="button" onClick={() => {
+                                   const updated = [...seasons]; updated[sIdx].episodes[eIdx].driveLinks.push({ label: `DRIVE_${ep.driveLinks.length+1}`, url: '' }); setSeasons(updated);
+                                 }} className="text-[7px] font-black opacity-20 hover:opacity-100 uppercase tracking-widest">+ ADD_DRIVE</button>
+                               </div>
+                               <div className="space-y-3">
+                                 <span className="text-[8px] opacity-30 uppercase font-black tracking-widest">KEY_NODES</span>
+                                 {ep.keyLinks.map((kl, klIdx) => (
+                                   <div key={klIdx} className="flex gap-2">
+                                     <input className="bg-white/5 border border-white/10 p-3 text-[8px] w-24 font-black" placeholder="LABEL" value={kl.label} onChange={e => {
+                                        const updated = [...seasons]; updated[sIdx].episodes[eIdx].keyLinks[klIdx].label = e.target.value.toUpperCase(); setSeasons(updated);
+                                     }} />
+                                     <input className="bg-white/5 border border-white/10 p-3 text-[8px] flex-1" placeholder="URL" value={kl.url} onChange={e => {
+                                        const updated = [...seasons]; updated[sIdx].episodes[eIdx].keyLinks[klIdx].url = e.target.value; setSeasons(updated);
+                                     }} />
+                                   </div>
+                                 ))}
+                                 <button type="button" onClick={() => {
+                                   const updated = [...seasons]; updated[sIdx].episodes[eIdx].keyLinks.push({ label: `KEY_${ep.keyLinks.length+1}`, url: '' }); setSeasons(updated);
+                                 }} className="text-[7px] font-black opacity-20 hover:opacity-100 uppercase tracking-widest">+ ADD_KEY</button>
+                               </div>
+                             </div>
+                           </div>
+                         ))}
+                         <button type="button" onClick={() => addEpisode(season.id)} className="w-full border border-dashed border-white/10 py-5 text-[9px] font-black uppercase opacity-30 hover:opacity-100 hover:bg-white/[0.02] tracking-[0.4em]">APPEND_SEGMENT_DATA</button>
+                       </div>
+                     </div>
+                   ))}
+                 </div>
+              </div>
+            ) : (
+              <div className="pt-8 border-t border-white/5 space-y-10">
+                <div className="flex flex-col gap-4">
+                  <span className="text-[9px] uppercase tracking-[0.6em] opacity-20 font-black">Protocol_Gates</span>
+                  <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-5 gap-4">
+                    {[
+                      { id: 'dl', label: 'DOWNLOAD', state: showDownload, set: setShowDownload },
+                      { id: 'yt', label: 'YOUTUBE', state: showYoutube, set: setShowYoutube },
+                      { id: 'dr', label: 'DRIVE_SOURCE', state: showDrive, set: setShowDrive },
+                      { id: 'ky', label: 'ACCESS_PROTOCOL', state: showKey, set: setShowKey },
+                      { id: 'up', label: 'UPCOMING_STATUS', state: isUpcoming, set: setIsUpcoming },
+                    ].map(t => (
+                      <button key={t.id} type="button" onClick={() => t.set(!t.state)} className={`py-4 border text-[9px] font-black uppercase tracking-widest transition-all flex items-center justify-center gap-3 ${t.state ? (t.id === 'up' ? 'bg-blue-600 text-white border-blue-600' : 'bg-white text-black') : 'opacity-20 border-white/10 hover:opacity-60'}`}>
+                        <div className={`w-1.5 h-1.5 rounded-full ${t.state ? (t.id === 'up' ? 'bg-white' : 'bg-black') + ' animate-pulse' : 'bg-white'}`} />
+                        {t.label}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+                <div className="space-y-6">
+                  {showDownload && <input className="w-full bg-white/[0.05] border border-white/20 p-5 text-sm outline-none text-white tracking-widest focus:border-white transition-all uppercase font-black" placeholder="HTTPS://DIRECT_SOURCE" value={formData.downloadUrl || ''} onChange={e => setFormData({...formData, downloadUrl: e.target.value})} />}
+                  {showYoutube && <input className="w-full bg-white/[0.05] border border-white/20 p-5 text-sm outline-none text-white tracking-widest focus:border-white transition-all uppercase font-black" placeholder="YOUTUBE_IDENTIFIER" value={formData.youtubeId || ''} onChange={e => setFormData({...formData, youtubeId: e.target.value})} />}
+                  
                   {showDrive && (
                     <div className="space-y-4">
                       <div className="flex justify-between items-center">
-                        <label className="text-[8px] md:text-[9px] uppercase tracking-[0.3em] md:tracking-[0.5em] opacity-40 font-black ml-1 text-white">Cloud_Mirrors (DRIVE_SOURCES)</label>
-                        <button 
-                          type="button" 
-                          onClick={addDriveLink}
-                          className="text-[8px] tracking-[0.2em] font-black uppercase text-blue-400 hover:text-blue-300 transition-colors"
-                        >
-                          + ADD_ENDPOINT
-                        </button>
+                        <span className="text-[8px] opacity-30 font-black tracking-widest uppercase ml-1">DRIVE_NODES</span>
+                        <button type="button" onClick={() => setDriveLinks([...driveLinks, { label: `DRIVE_${driveLinks.length + 1}`, url: '' }])} className="text-[8px] text-blue-400 font-black tracking-widest uppercase hover:text-blue-300 transition-colors">+ ADD_ENDPOINT</button>
                       </div>
-                      <div className="space-y-3">
-                        {driveLinks.map((link, idx) => (
-                          <div key={idx} className="flex flex-col sm:flex-row gap-2 animate-in slide-in-from-left-2 duration-300">
-                            <input 
-                              className="w-full sm:w-1/3 bg-white/[0.05] border border-white/30 p-4 text-[10px] outline-none tracking-widest text-white/50 focus:border-white font-black"
-                              placeholder="LABEL (e.g., MEGA)"
-                              value={link.label}
-                              onChange={e => updateDriveLink(idx, 'label', e.target.value.toUpperCase())}
-                            />
-                            <input 
-                              required={showDrive}
-                              className="w-full bg-white/[0.05] border border-white/30 p-4 text-sm outline-none tracking-[0.1em] text-white focus:border-white"
-                              placeholder="HTTPS://CLOUD_LINK"
-                              value={link.url}
-                              onChange={e => updateDriveLink(idx, 'url', e.target.value)}
-                            />
-                            {driveLinks.length > 1 && (
-                              <button 
-                                type="button" 
-                                onClick={() => removeDriveLink(idx)}
-                                className="p-4 bg-red-600/10 border border-red-600/30 text-red-500 hover:bg-red-600 hover:text-white transition-all"
-                              >
-                                <svg width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeWidth={2} d="M6 18L18 6M6 6l12 12" /></svg>
-                              </button>
-                            )}
-                          </div>
-                        ))}
-                      </div>
+                      {driveLinks.map((dl, idx) => (
+                        <div key={idx} className="flex gap-2 animate-in slide-in-from-left-2 duration-300">
+                           <input className="w-32 md:w-40 bg-white/5 border border-white/10 p-4 text-[10px] font-black uppercase" placeholder="LABEL" value={dl.label} onChange={e => { const u = [...driveLinks]; u[idx].label = e.target.value.toUpperCase(); setDriveLinks(u); }} />
+                           <input className="flex-1 bg-white/5 border border-white/10 p-4 text-sm font-black" placeholder="URL" value={dl.url} onChange={e => { const u = [...driveLinks]; u[idx].url = e.target.value; setDriveLinks(u); }} />
+                           {driveLinks.length > 1 && (
+                             <button 
+                               onClick={() => setDriveLinks(driveLinks.filter((_, i) => i !== idx))}
+                               className="clickable w-14 h-14 border border-red-600/20 bg-red-600/5 hover:bg-red-600 hover:text-white flex items-center justify-center transition-all flex-shrink-0"
+                             >
+                               <svg width="20" height="20" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}><path d="M6 18L18 6M6 6l12 12" /></svg>
+                             </button>
+                           )}
+                        </div>
+                      ))}
                     </div>
                   )}
+
                   {showKey && (
                     <div className="space-y-4">
                       <div className="flex justify-between items-center">
-                        <label className="text-[8px] md:text-[9px] uppercase tracking-[0.3em] md:tracking-[0.5em] opacity-40 font-black ml-1 text-white">Access_Protocols (GET_KEY_URLS)</label>
-                        <button 
-                          type="button" 
-                          onClick={addKeyLink}
-                          className="text-[8px] tracking-[0.2em] font-black uppercase text-blue-400 hover:text-blue-300 transition-colors"
-                        >
-                          + ADD_PROTOCOL
-                        </button>
+                        <span className="text-[8px] opacity-30 font-black tracking-widest uppercase ml-1">ACCESS_PROTOCOLS</span>
+                        <button type="button" onClick={() => setKeyLinks([...keyLinks, { label: `KEY_${keyLinks.length + 1}`, url: '' }])} className="text-[8px] text-blue-400 font-black tracking-widest uppercase hover:text-blue-300 transition-colors">+ ADD_PROTOCOL</button>
                       </div>
-                      <div className="space-y-3">
-                        {keyLinks.map((link, idx) => (
-                          <div key={idx} className="flex flex-col sm:flex-row gap-2 animate-in slide-in-from-left-2 duration-300">
-                            <input 
-                              className="w-full sm:w-1/3 bg-white/[0.05] border border-white/30 p-4 text-[10px] outline-none tracking-widest text-white/50 focus:border-white font-black"
-                              placeholder="LABEL (e.g., KEY_1)"
-                              value={link.label}
-                              onChange={e => updateKeyLink(idx, 'label', e.target.value.toUpperCase())}
-                            />
-                            <input 
-                              required={showKey}
-                              className="w-full bg-white/[0.05] border border-white/30 p-4 text-sm outline-none tracking-[0.1em] text-white focus:border-white"
-                              placeholder="HTTPS://GET_KEY_URL"
-                              value={link.url}
-                              onChange={e => updateKeyLink(idx, 'url', e.target.value)}
-                            />
-                            {keyLinks.length > 1 && (
-                              <button 
-                                type="button" 
-                                onClick={() => removeKeyLink(idx)}
-                                className="p-4 bg-red-600/10 border border-red-600/30 text-red-500 hover:bg-red-600 hover:text-white transition-all"
-                              >
-                                <svg width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeWidth={2} d="M6 18L18 6M6 6l12 12" /></svg>
-                              </button>
-                            )}
-                          </div>
-                        ))}
-                      </div>
+                      {keyLinks.map((kl, idx) => (
+                        <div key={idx} className="flex gap-2 animate-in slide-in-from-left-2 duration-300">
+                           <input className="w-32 md:w-40 bg-white/5 border border-white/10 p-4 text-[10px] font-black uppercase" placeholder="LABEL" value={kl.label} onChange={e => { const u = [...keyLinks]; u[idx].label = e.target.value.toUpperCase(); setKeyLinks(u); }} />
+                           <input className="flex-1 bg-white/5 border border-white/10 p-4 text-sm font-black" placeholder="URL" value={kl.url} onChange={e => { const u = [...keyLinks]; u[idx].url = e.target.value; setKeyLinks(u); }} />
+                           {keyLinks.length > 1 && (
+                             <button 
+                               onClick={() => setKeyLinks(keyLinks.filter((_, i) => i !== idx))}
+                               className="clickable w-14 h-14 border border-red-600/20 bg-red-600/5 hover:bg-red-600 hover:text-white flex items-center justify-center transition-all flex-shrink-0"
+                             >
+                               <svg width="20" height="20" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}><path d="M6 18L18 6M6 6l12 12" /></svg>
+                             </button>
+                           )}
+                        </div>
+                      ))}
                     </div>
                   )}
                 </div>
               </div>
+            )}
 
-              {formError && (
-                <div className="p-4 md:p-5 border border-red-600/30 bg-red-600/5 text-red-500 text-[9px] md:text-[10px] tracking-[0.3em] md:tracking-[0.5em] font-black uppercase text-center animate-shake">
-                  [ ALERT ]: {formError}
+            <button type="submit" className="w-full py-8 md:py-10 bg-white text-black font-black uppercase tracking-[1.5em] transition-all hover:bg-zinc-200 active:scale-[0.99] text-sm">{isSubmitting ? 'INGESTING...' : editingId ? 'UPDATE_ARCHIVE' : 'COMMIT_TO_DATABASE'}</button>
+          </form>
+        )}
+
+        {activeTab === 'manage' && (
+          <div className="space-y-16 pb-32 animate-in fade-in duration-700">
+             {/* ARCHIVE_DATA_OPERATIONS */}
+             <div className="border border-white/10 bg-white/[0.02] p-8 md:p-12 space-y-10">
+                <div className="flex justify-between items-center opacity-30 text-[9px] font-black tracking-[0.5em] uppercase border-b border-white/5 pb-4">
+                  <span>ARCHIVE_DATA_OPERATIONS</span>
+                  <span>STABILITY: OPTIMAL</span>
                 </div>
-              )}
-
-              <div className="pt-6 md:pt-10">
-                <button 
-                  type="submit"
-                  disabled={isSubmitting}
-                  className={`clickable w-full py-6 md:py-8 font-black tracking-[0.8em] md:tracking-[1.5em] uppercase transition-all flex items-center justify-center gap-6 active:scale-[0.99] group overflow-hidden relative ${isSubmitting ? 'bg-zinc-800 text-white/50' : 'bg-white text-black hover:bg-zinc-200'}`}
-                >
-                  <span className="relative z-10 text-[10px] md:text-sm">{isSubmitting ? 'SECURE_TRANSMIT...' : editingId ? 'UPDATE_ARCHIVE_ENTRY' : 'COMMIT_TO_DATABASE'}</span>
-                  <div className="absolute inset-0 bg-black/5 translate-y-full group-hover:translate-y-0 transition-transform duration-500" />
-                </button>
-              </div>
-            </form>
-          )}
-
-          {activeTab === 'manage' && (
-            <div className="space-y-12 pb-32">
-              {/* Data Operations Panel */}
-              <div className="border border-white/10 bg-white/[0.02] p-6 md:p-8 space-y-8">
-                <div className="flex flex-col gap-2">
-                  <div className="flex justify-between items-center">
-                    <span className="text-[8px] uppercase tracking-[0.5em] opacity-30 font-black">Archive_Data_Operations</span>
-                    <span className="text-[7px] opacity-10 font-black">STABILITY: OPTIMAL</span>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+                  <div className="space-y-6">
+                    <span className="text-[9px] font-black uppercase tracking-[0.4em] opacity-40">LOCAL_MAINTENANCE</span>
+                    <button onClick={exportArchive} className="w-full py-5 border border-white/10 font-black uppercase tracking-widest text-[11px] hover:bg-white hover:text-black transition-all">EXPORT_ARCHIVE_JSON</button>
+                    <button onClick={() => fileInputRef.current?.click()} className="w-full py-5 border border-white/10 font-black uppercase tracking-widest text-[11px] hover:bg-white hover:text-black transition-all">RESTORE_FROM_BACKUP</button>
+                    <input type="file" ref={fileInputRef} className="hidden" accept=".json" onChange={handleImport} />
                   </div>
-                  <div className="h-[1px] w-full bg-white/5" />
+                  <div className="p-8 border border-white/10 bg-white/[0.03] flex flex-col gap-6 group">
+                     <div className="flex items-center gap-3">
+                        <div className="w-2 h-2 bg-blue-500 rounded-full animate-pulse" />
+                        <span className="text-[10px] font-black uppercase tracking-widest text-blue-400">GITHUB_GLOBAL_SYNC</span>
+                     </div>
+                     <p className="text-[10px] opacity-20 group-hover:opacity-40 transition-opacity uppercase leading-relaxed font-black">Push local registry changes to the production repository for global distribution.</p>
+                     <button onClick={() => setShowDeployModal(true)} className="w-full mt-auto py-5 bg-blue-500/10 border border-blue-500/30 text-[10px] font-black uppercase tracking-[0.5em] text-blue-400 hover:bg-blue-500 hover:text-white transition-all">PREPARE_GLOBAL_DEPLOYMENT</button>
+                  </div>
                 </div>
-                
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  <div className="p-6 border border-white/5 bg-white/[0.01] flex flex-col gap-4">
-                     <span className="text-[8px] tracking-[0.3em] opacity-40 font-black uppercase">Local_Maintenance</span>
-                     <div className="flex flex-col gap-3">
-                        <button 
-                          onClick={exportArchive}
-                          className="clickable py-3 border border-white/10 text-[8px] tracking-[0.4em] uppercase font-black hover:bg-white hover:text-black transition-all"
-                        >
-                          EXPORT_ARCHIVE_JSON
-                        </button>
-                        <button 
-                          onClick={() => fileInputRef.current?.click()}
-                          className="clickable py-3 border border-white/10 text-[8px] tracking-[0.4em] uppercase font-black hover:bg-white hover:text-black transition-all"
-                        >
-                          RESTORE_FROM_BACKUP
-                        </button>
-                     </div>
-                  </div>
+             </div>
 
-                  <div className="p-6 border border-white/10 bg-white/[0.03] flex flex-col gap-4 group">
-                     <div className="flex items-center gap-2">
-                        <div className="w-1.5 h-1.5 bg-blue-500 rounded-full animate-pulse" />
-                        <span className="text-[8px] tracking-[0.3em] opacity-70 font-black uppercase text-blue-400">GitHub_Global_Sync</span>
-                     </div>
-                     <p className="text-[8px] leading-relaxed opacity-20 group-hover:opacity-40 transition-opacity">
-                        To update the site for everyone on Netlify/Vercel, copy the code and push to your GitHub repository.
-                     </p>
+             <div className="space-y-6">
+               <div className="flex justify-between items-center opacity-20 text-[8px] font-black tracking-[0.5em] uppercase px-4 mb-4">
+                  <span>ARCHIVE_IDENTIFIER</span>
+                  <span>SEQUENTIAL_MAP</span>
+               </div>
+               {resources.map(res => (
+                 <div key={res.id} className="group border border-white/5 bg-white/[0.01] hover:bg-white/[0.04] p-5 flex items-center justify-between transition-all rounded-sm">
+                   <div className="flex items-center gap-8">
+                      <img src={res.thumbnail} className="w-24 h-14 object-cover border border-white/10 grayscale group-hover:grayscale-0 transition-all duration-700" alt="" />
+                      <div>
+                        <h4 className="text-sm font-black tracking-widest uppercase mb-1">{res.name} {res.isUpcoming && <span className="text-[7px] text-blue-400 ml-2 tracking-widest">[UPCOMING]</span>}</h4>
+                        <span className="text-[8px] opacity-20 uppercase font-black tracking-[0.4em]">{res.category} {res.isSeasonBased ? '// SEQUENTIAL' : ''}</span>
+                      </div>
+                   </div>
+                   <div className="flex gap-4">
+                     <button onClick={() => startEdit(res)} className="text-[9px] text-white/30 hover:text-white font-black tracking-widest p-4 transition-all">EDIT</button>
                      <button 
-                        onClick={() => setShowDeployModal(true)}
-                        className="clickable mt-auto py-4 bg-blue-500/10 border border-blue-500/30 text-[9px] tracking-[0.5em] uppercase font-black text-blue-400 hover:bg-blue-500 hover:text-white transition-all"
+                        onClick={() => handleDelete(res.id)} 
+                        className="clickable w-12 h-12 border border-red-600/20 bg-red-600/5 hover:bg-red-600 hover:text-white flex items-center justify-center transition-all"
                      >
-                       PREPARE_GLOBAL_DEPLOYMENT
+                       <svg width="18" height="18" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}><path d="M6 18L18 6M6 6l12 12" /></svg>
                      </button>
-                  </div>
-                </div>
-
-                <input 
-                  type="file" 
-                  ref={fileInputRef} 
-                  className="hidden" 
-                  accept=".json" 
-                  onChange={handleImport}
-                />
-              </div>
-
-              <div className="space-y-6">
-                <div className="flex justify-between items-center px-4 md:px-6 opacity-20 text-[7px] md:text-[8px] font-black tracking-widest uppercase mb-4">
-                  <span>Archive_Identifier</span>
-                  <span>Operations</span>
-                </div>
-                {resources.length === 0 && (
-                  <div className="text-center py-32 md:py-56 opacity-[0.05] text-[10px] md:text-[12px] tracking-[1.5em] md:tracking-[2em] font-black pointer-events-none select-none">NULL_DATA</div>
-                )}
-                {resources.map(res => (
-                  <div key={res.id} className="group border border-white/5 bg-white/[0.01] hover:bg-white/[0.04] transition-all p-4 md:p-5 flex flex-col sm:flex-row justify-between items-start sm:items-center rounded-sm gap-4">
-                    <div className="flex gap-4 md:gap-8 items-center w-full">
-                        <div className="w-20 md:w-24 h-12 md:h-14 flex-shrink-0 border border-white/10 overflow-hidden grayscale brightness-50 group-hover:grayscale-0 group-hover:brightness-100 transition-all duration-1000">
-                          <img src={res.thumbnail} className="w-full h-full object-cover scale-110 group-hover:scale-100 transition-transform duration-700" alt="" />
-                        </div>
-                        <div className="min-w-0">
-                          <h4 className="text-[12px] md:text-[14px] font-black tracking-[0.1em] uppercase mb-1 truncate">{res.name}</h4>
-                          <div className="flex flex-wrap gap-2 md:gap-4 items-center">
-                            <span className="text-[7px] md:text-[8px] opacity-30 uppercase font-black tracking-widest">{res.category}</span>
-                            <div className="hidden md:block w-1 h-1 bg-white/10 rounded-full" />
-                            <span className="text-[7px] md:text-[8px] opacity-30 uppercase font-black tracking-widest">ID: {res.id.split('-')[1]}</span>
-                          </div>
-                        </div>
-                    </div>
-                    <div className="flex items-center gap-2 w-full sm:w-auto">
-                      <button 
-                        onClick={() => startEdit(res)}
-                        className="clickable flex-1 sm:flex-initial text-[8px] md:text-[9px] text-white/30 hover:text-white tracking-[0.3em] uppercase font-black transition-all p-3 md:p-4 border border-white/5 sm:border-transparent hover:border-white/10 hover:bg-white/5 text-center"
-                      >
-                        EDIT_DATA
-                      </button>
-                      <button 
-                        onClick={() => handleDelete(res.id)}
-                        className="clickable flex-1 sm:flex-initial text-[8px] md:text-[9px] text-red-600/30 hover:text-red-600 tracking-[0.3em] uppercase font-black transition-all p-3 md:p-4 border border-white/5 sm:border-transparent hover:border-red-600/10 hover:bg-red-600/5 text-center"
-                      >
-                        ERASE
-                      </button>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </div>
-          )}
-        </div>
+                   </div>
+                 </div>
+               ))}
+             </div>
+          </div>
+        )}
       </div>
 
-      {/* Deployment Modal */}
       {showDeployModal && (
-        <div className="fixed inset-0 z-[5000] flex items-center justify-center p-4 md:p-12">
+        <div className="fixed inset-0 z-[5000] flex items-center justify-center p-8">
           <div className="absolute inset-0 bg-black/95 backdrop-blur-xl" onClick={() => setShowDeployModal(false)} />
-          <div className="relative w-full max-w-5xl h-[80vh] bg-[#080808] border border-white/10 shadow-[0_0_100px_rgba(0,0,0,0.8)] flex flex-col animate-in fade-in zoom-in-95 duration-500">
-            <div className="p-6 md:p-10 border-b border-white/5 flex justify-between items-center">
-               <div>
-                  <h3 className="text-xl md:text-2xl font-black uppercase tracking-[0.3em] text-blue-400">GitHub_Sync_Generator</h3>
-                  <p className="text-[9px] opacity-40 uppercase tracking-widest mt-1">Copy code {'->'} Update data/resources.ts {'->'} Push to GitHub</p>
-               </div>
-               <button onClick={() => setShowDeployModal(false)} className="clickable p-2 opacity-30 hover:opacity-100">
+          <div className="relative w-full max-w-5xl h-[80vh] bg-[#080808] border border-white/10 flex flex-col animate-in zoom-in-95 duration-500">
+            <div className="p-10 border-b border-white/5 flex justify-between items-center">
+               <h3 className="text-2xl font-black uppercase tracking-widest text-blue-400">GITHUB_SYNC_GENERATOR</h3>
+               <button onClick={() => setShowDeployModal(false)} className="p-2 opacity-30 hover:opacity-100">
                   <svg width="24" height="24" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path d="M6 18L18 6M6 6l12 12" /></svg>
                </button>
             </div>
-            <div className="flex-1 overflow-hidden p-6 md:p-10">
-               <div className="h-full w-full bg-black/50 border border-white/5 rounded-sm overflow-y-auto no-scrollbar p-6 font-mono text-[10px] md:text-xs text-white/60 relative">
-                  <pre className="whitespace-pre-wrap">{generateDeploymentCode()}</pre>
-               </div>
+            <div className="flex-1 overflow-hidden p-10">
+               <pre className="h-full w-full bg-black/50 border border-white/5 p-8 font-mono text-xs text-white/40 overflow-y-auto no-scrollbar">{generateDeploymentCode()}</pre>
             </div>
-            <div className="p-6 md:p-10 border-t border-white/5 flex flex-col md:flex-row gap-6 items-center justify-between">
-               <div className="text-[8px] md:text-[9px] opacity-20 uppercase tracking-[0.2em] font-black max-w-sm text-center md:text-left">
-                  COMMIT_READY: PASTE THIS OVER "data/resources.ts" AND PUSH TO MASTER BRANCH
-               </div>
-               <button 
-                onClick={copyDeploymentCode}
-                className="clickable w-full md:w-auto px-12 py-5 bg-white text-black font-black tracking-[0.8em] uppercase text-[10px] hover:bg-zinc-200 transition-all active:scale-[0.98]"
-               >
-                 COPY_CODE_FOR_GITHUB
-               </button>
+            <div className="p-10 border-t border-white/5 flex items-center justify-between bg-white/[0.01]">
+               <span className="text-[9px] opacity-20 font-black uppercase tracking-[0.3em]">REPLACE: data/resources.ts // PUSH TO MASTER</span>
+               <button onClick={copyDeploymentCode} className="px-16 py-6 bg-white text-black font-black tracking-[1em] uppercase text-xs hover:bg-zinc-200 transition-all">COPY_PROTOCOL_CODE</button>
             </div>
           </div>
         </div>
       )}
-      
-      <div className="fixed inset-0 pointer-events-none z-0 opacity-[0.02] bg-[linear-gradient(rgba(18,16,16,0)_50%,rgba(0,0,0,0.25)_50%),linear-gradient(90deg,rgba(255,0,0,0.06),rgba(0,255,0,0.02),rgba(0,0,255,0.06))] bg-[length:100%_4px,4px_100%]" />
-      
-      <style>{`
-        @keyframes shake {
-          0%, 100% { transform: translateX(0); }
-          25% { transform: translateX(-4px); }
-          75% { transform: translateX(4px); }
-        }
-        .animate-shake {
-          animation: shake 0.2s cubic-bezier(.36,.07,.19,.97) both;
-        }
-      `}</style>
     </div>
   );
 };

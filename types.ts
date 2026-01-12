@@ -25,6 +25,20 @@ export interface MirrorLink {
   url: string;
 }
 
+export interface Episode {
+  id: string;
+  number: string;
+  name?: string;
+  driveLinks: MirrorLink[];
+  keyLinks: MirrorLink[];
+}
+
+export interface Season {
+  id: string;
+  label: string;
+  episodes: Episode[];
+}
+
 export interface Resource {
   id: string;
   name: string;
@@ -33,11 +47,16 @@ export interface Resource {
   thumbnail: string;
   downloadUrl?: string;
   youtubeId?: string;
-  driveUrl?: string; // Legacy field for single link
-  driveLinks?: MirrorLink[]; // New field for multiple mirrors
-  getKeyUrl?: string; // Legacy field for single key
-  keyLinks?: MirrorLink[]; // New field for multiple keys
+  driveUrl?: string; // Legacy field
+  driveLinks?: MirrorLink[]; // Legacy field for single-entry
+  getKeyUrl?: string; // Legacy field
+  keyLinks?: MirrorLink[]; // Legacy field for single-entry
   createdAt?: number;
+  isUpcoming?: boolean;
+  
+  // Anime Specific
+  isSeasonBased?: boolean;
+  seasons?: Season[];
 }
 
 export interface CategoryData {
