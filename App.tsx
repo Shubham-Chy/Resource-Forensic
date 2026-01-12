@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { Resource, ResourceCategory } from './types';
 import { getResources } from './data/resources';
 import CustomCursor from './components/CustomCursor';
@@ -21,6 +21,9 @@ const App: React.FC = () => {
   const [isSearchOpen, setIsSearchOpen] = useState(false);
   const [isSweeping, setIsSweeping] = useState(false);
   const [isDarkMode, setIsDarkMode] = useState(true);
+  
+  // Ref to track if audio has already been played to ensure it only plays once
+  const hasPlayedAudio = useRef(false);
 
   useEffect(() => {
     try {
@@ -85,9 +88,20 @@ const App: React.FC = () => {
     setIsSearchOpen(false); 
   };
 
+  const handleLoadingComplete = () => {
+    setLoading(false);
+    
+    // One-time audio trigger on site entry
+    if (!hasPlayedAudio.current) {
+      const audio = new Audio('/voice_note.mp3');
+      audio.play().catch(err => console.debug("Audio playback prevented by browser:", err));
+      hasPlayedAudio.current = true;
+    }
+  };
+
   const isAdminArea = currentView === 'admin_login' || currentView === 'admin_panel';
 
-  if (loading) return <LoadingScreen onComplete={() => setLoading(false)} />;
+  if (loading) return <LoadingScreen onComplete={handleLoadingComplete} />;
 
   const renderContent = () => {
     if (currentView === 'admin_login') {
