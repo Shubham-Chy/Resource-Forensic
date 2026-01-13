@@ -6,6 +6,25 @@ import { Resource, ResourceCategory } from '../types';
  */
 const INITIAL_RESOURCES: Resource[] = [
   {
+    "category": "Packs",
+    "name": "Core Transitions Pack - AAPOWER",
+    "thumbnail": "https://i.ibb.co/vC5K9qth/Videohive-Core-Transitions-Pack-350-Dynamic-Seamless-Transitions-for-After-Effects-AAPower.jpg",
+    "downloadUrl": "https://mega.nz/folder/tJ8SACja",
+    "description": "Core Transitions Pack is the ultimate collection of 350+ dynamic, seamless transitions for Adobe After Effects.\nEach transition is handcrafted to deliver smooth, cinematic movement and add energy to any edit. Designed for editors, motion designers, and content creators — it’s the fastest way to make your cuts stand out.",
+    "youtubeId": "2SVfd7Ffidk",
+    "id": "res-1768305934763",
+    "createdAt": 1768305934763,
+    "isUpcoming": false,
+    "isSeasonBased": false,
+    "keyLinks": [
+      {
+        "label": "ACCESS KEY",
+        "url": "https://work.ink/2bBx/core-transitions-pack-aapowr"
+      }
+    ],
+    "getKeyUrl": "https://work.ink/2bBx/core-transitions-pack-aapowr"
+  },
+  {
     "category": "Anime Clips",
     "name": "Jujutsu Kaisen",
     "thumbnail": "https://i.ibb.co/v4TM1dNx/512px-Jujutsu-Kaisen-Japanese-logo-svg.webp",
