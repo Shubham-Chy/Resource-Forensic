@@ -1,13 +1,16 @@
 import React, { useEffect, useRef, useState } from 'react';
 
+// Direct path to the asset relative to the root
+const voiceNoteUrl = '../voice_note.mp3';
+
 const AudioOperator: React.FC<{ startAudio: boolean }> = ({ startAudio }) => {
   const [isPlaying, setIsPlaying] = useState(false);
   const audioRef = useRef<HTMLAudioElement | null>(null);
   const [visualizerBars] = useState(new Array(12).fill(0));
 
   useEffect(() => {
-    // Note: User can replace this path with their actual voice note URL
-    audioRef.current = new Audio('/voice_note.mp3');
+    // Use the string path directly
+    audioRef.current = new Audio(voiceNoteUrl);
     audioRef.current.loop = false;
     
     return () => {

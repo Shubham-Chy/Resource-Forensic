@@ -11,6 +11,9 @@ import AdminLogin from './components/AdminLogin';
 import AdminDashboard from './components/AdminDashboard';
 import SecurityGate from './components/SecurityGate';
 
+// Direct path to the asset to avoid 'Invalid URL' construction errors in specific environments
+const voiceNoteUrl = '../voice_note.mp3';
+
 type View = 'home' | 'admin_login' | 'admin_panel' | ResourceCategory;
 
 const App: React.FC = () => {
@@ -93,8 +96,8 @@ const App: React.FC = () => {
     
     // One-time audio trigger on site entry
     if (!hasPlayedAudio.current) {
-      const audio = new Audio('/voice_note.mp3');
-      audio.volume = 0.35; // Lowered volume to 35%
+      const audio = new Audio(voiceNoteUrl);
+      audio.volume = 0.35; // Maintained volume at 35%
       audio.play().catch(err => {
         console.debug("Audio playback prevented by browser policy. Interaction required.", err);
       });
