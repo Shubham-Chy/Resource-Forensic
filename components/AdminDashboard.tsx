@@ -194,13 +194,22 @@ const AdminDashboard: React.FC<{ onLogout: () => void }> = ({ onLogout }) => {
 const INITIAL_RESOURCES: Resource[] = ${resourcesJson} as any;
 
 const STORAGE_KEY = 'resource_forensic_vault';
+const VERSION_KEY = 'resource_forensic_version';
+
+// Determine version based on newest item timestamp to force cache bypass for returning users
+const CURRENT_VERSION = Math.max(...INITIAL_RESOURCES.map(r => r.createdAt || 0), 0);
 
 export const getResources = (): Resource[] => {
   const stored = localStorage.getItem(STORAGE_KEY);
-  if (!stored) {
+  const storedVersion = localStorage.getItem(VERSION_KEY);
+
+  // Auto-sync logic: If source code is newer than user's browser cache, overwrite
+  if (!stored || !storedVersion || parseInt(storedVersion) < CURRENT_VERSION) {
     localStorage.setItem(STORAGE_KEY, JSON.stringify(INITIAL_RESOURCES));
+    localStorage.setItem(VERSION_KEY, CURRENT_VERSION.toString());
     return INITIAL_RESOURCES;
   }
+  
   return JSON.parse(stored);
 };
 

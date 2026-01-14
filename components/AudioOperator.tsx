@@ -1,7 +1,8 @@
 import React, { useEffect, useRef, useState } from 'react';
 
-// Direct path to the asset relative to the root
-const voiceNoteUrl = '../voice_note.mp3';
+// Import the audio file directly from the parent directory
+// @ts-ignore
+import voiceNote from '../voice_note.mp3';
 
 const AudioOperator: React.FC<{ startAudio: boolean }> = ({ startAudio }) => {
   const [isPlaying, setIsPlaying] = useState(false);
@@ -9,8 +10,8 @@ const AudioOperator: React.FC<{ startAudio: boolean }> = ({ startAudio }) => {
   const [visualizerBars] = useState(new Array(12).fill(0));
 
   useEffect(() => {
-    // Use the string path directly
-    audioRef.current = new Audio(voiceNoteUrl);
+    // Use the imported hashed URL provided by Vite
+    audioRef.current = new Audio(voiceNote);
     audioRef.current.loop = false;
     
     return () => {
@@ -22,7 +23,7 @@ const AudioOperator: React.FC<{ startAudio: boolean }> = ({ startAudio }) => {
   }, []);
 
   useEffect(() => {
-    if (startAudio && audioRef.current) {
+    if (startAudio && audioRef.current && !isPlaying) {
       audioRef.current.play()
         .then(() => setIsPlaying(true))
         .catch(err => console.debug("Audio handshake failed:", err));
