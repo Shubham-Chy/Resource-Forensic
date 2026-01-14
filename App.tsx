@@ -93,9 +93,8 @@ const App: React.FC = () => {
     
     // One-time audio trigger on site entry
     if (!hasPlayedAudio.current) {
-      // Using new URL ensures Vite bundles the asset into the dist folder correctly
-      const audioUrl = new URL('./voice_note.mp3', import.meta.url).href;
-      const audio = new Audio(audioUrl);
+      const audio = new Audio('/voice_note.mp3');
+      audio.volume = 0.35; // Lowered volume to 35%
       audio.play().catch(err => {
         console.debug("Audio playback prevented by browser policy. Interaction required.", err);
       });

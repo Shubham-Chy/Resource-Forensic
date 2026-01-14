@@ -10,6 +10,7 @@ interface ResourceModalProps {
 const ResourceModal: React.FC<ResourceModalProps> = ({ resource, onClose, isDarkMode = true }) => {
   const [isVisible, setIsVisible] = useState(false);
   const [shouldRender, setShouldRender] = useState(false);
+  const [isKeyCopied, setIsKeyCopied] = useState(false);
   
   // Anime Navigation State
   const [activeSeason, setActiveSeason] = useState<Season | null>(null);
@@ -27,7 +28,6 @@ const ResourceModal: React.FC<ResourceModalProps> = ({ resource, onClose, isDark
       setShouldRender(true);
       const timer = setTimeout(() => setIsVisible(true), 10);
       
-      // Initializing Anime Navigation
       if (resource.category === ResourceCategory.ANIME_CLIPS && resource.isSeasonBased && resource.seasons?.length) {
         setActiveSeason(resource.seasons[0]);
         setActiveEpisode(null);
@@ -41,6 +41,7 @@ const ResourceModal: React.FC<ResourceModalProps> = ({ resource, onClose, isDark
       setIsVisible(false);
       setIsMirrorMenuOpen(false);
       setIsKeyMenuOpen(false);
+      setIsKeyCopied(false);
     }
   }, [resource]);
 
@@ -52,6 +53,38 @@ const ResourceModal: React.FC<ResourceModalProps> = ({ resource, onClose, isDark
     if (isMirrorMenuOpen || isKeyMenuOpen) window.addEventListener('mousedown', handleClickOutside);
     return () => window.removeEventListener('mousedown', handleClickOutside);
   }, [isMirrorMenuOpen, isKeyMenuOpen]);
+
+  const handleCopyKey = (key: string) => {
+    if (navigator.clipboard && window.isSecureContext) {
+      navigator.clipboard.writeText(key).then(() => {
+        setIsKeyCopied(true);
+        setTimeout(() => setIsKeyCopied(false), 3000);
+      }).catch(() => {
+        fallbackCopyTextToClipboard(key);
+      });
+    } else {
+      fallbackCopyTextToClipboard(key);
+    }
+  };
+
+  const fallbackCopyTextToClipboard = (text: string) => {
+    const textArea = document.createElement("textarea");
+    textArea.value = text;
+    textArea.style.position = "fixed"; 
+    textArea.style.left = "-9999px";
+    textArea.style.top = "0";
+    document.body.appendChild(textArea);
+    textArea.focus();
+    textArea.select();
+    try {
+      document.execCommand('copy');
+      setIsKeyCopied(true);
+      setTimeout(() => setIsKeyCopied(false), 3000);
+    } catch (err) {
+      console.error('Fallback copy failed', err);
+    }
+    document.body.removeChild(textArea);
+  };
 
   const handleCloseTrigger = () => {
     setIsVisible(false);
@@ -65,15 +98,16 @@ const ResourceModal: React.FC<ResourceModalProps> = ({ resource, onClose, isDark
 
   const isSeasonAnime = resource.category === ResourceCategory.ANIME_CLIPS && resource.isSeasonBased;
 
-  // Link Calculation logic
   let currentDriveLinks: MirrorLink[] = [];
   let currentKeyLinks: MirrorLink[] = [];
+  let currentDirectKey: string | undefined = resource.directKey;
   let currentDownloadUrl: string | undefined = resource.downloadUrl;
 
   if (isSeasonAnime && activeEpisode) {
     currentDriveLinks = activeEpisode.driveLinks;
     currentKeyLinks = activeEpisode.keyLinks;
-    currentDownloadUrl = undefined; // We don't use main download for seasonal episodes
+    currentDirectKey = activeEpisode.directKey;
+    currentDownloadUrl = undefined;
   } else if (!isSeasonAnime) {
     currentDriveLinks = resource.driveLinks || (resource.driveUrl ? [{ label: 'GOOGLE DRIVE', url: resource.driveUrl }] : []);
     currentKeyLinks = resource.keyLinks || (resource.getKeyUrl ? [{ label: 'ACCESS KEY', url: resource.getKeyUrl }] : []);
@@ -113,7 +147,6 @@ const ResourceModal: React.FC<ResourceModalProps> = ({ resource, onClose, isDark
             <h2 className={`text-3xl md:text-5xl font-black mb-6 tracking-tighter leading-none uppercase ${resource.isUpcoming ? 'opacity-40' : ''}`}>{resource.name}</h2>
             <p className="text-xs md:text-sm leading-relaxed opacity-40 mb-10">{resource.description}</p>
 
-            {/* Anime Seasons/Episodes Navigator */}
             {isSeasonAnime && !resource.isUpcoming && (
               <div className="space-y-10 animate-in fade-in duration-1000">
                 <div className="space-y-4">
@@ -152,7 +185,6 @@ const ResourceModal: React.FC<ResourceModalProps> = ({ resource, onClose, isDark
           </div>
 
           <div className="mt-auto space-y-4 relative">
-            {/* Conditional Action Buttons */}
             {resource.isUpcoming ? (
               <div className="py-16 md:py-24 border border-dashed border-white/10 flex flex-col items-center justify-center space-y-6 animate-in fade-in duration-1000">
                  <div className="flex flex-col items-center gap-4">
@@ -167,7 +199,25 @@ const ResourceModal: React.FC<ResourceModalProps> = ({ resource, onClose, isDark
             ) : (!isSeasonAnime || activeEpisode) ? (
               <div className="grid grid-cols-1 gap-4 animate-in fade-in slide-in-from-bottom-4 duration-500">
                 
-                {/* Drive Mirror Logic */}
+                {currentDirectKey && (
+                  <button 
+                    onClick={() => handleCopyKey(currentDirectKey!)}
+                    className={`group relative py-6 border transition-all flex flex-col items-center justify-center gap-1 overflow-hidden ${isKeyCopied ? 'border-green-500/50 bg-green-500/5' : 'border-blue-500/30 bg-blue-500/5 hover:border-blue-400'}`}
+                  >
+                    <div className="flex items-center gap-3">
+                      <div className={`w-1.5 h-1.5 rounded-full ${isKeyCopied ? 'bg-green-500 animate-ping' : 'bg-blue-500 animate-pulse'}`} />
+                      <span className={`text-[10px] font-black tracking-[0.4em] uppercase transition-colors ${isKeyCopied ? 'text-green-500' : 'text-blue-400'}`}>
+                        {isKeyCopied ? 'DECRYPTION_SUCCESSFUL' : 'COPY_CIPHER_KEY'}
+                      </span>
+                    </div>
+                    <span className="text-[8px] tracking-[0.6em] opacity-30 font-black uppercase">
+                      {isKeyCopied ? 'KEY_COPIED_TO_CLIPBOARD' : 'DIRECT_VAULT_ACCESS'}
+                    </span>
+                    {/* Interior Scan Effect */}
+                    <div className="absolute inset-0 bg-gradient-to-r from-transparent via-blue-400/5 to-transparent w-[30%] h-full left-0 animate-[scanHorizontal_2s_infinite] pointer-events-none" />
+                  </button>
+                )}
+
                 {(currentDriveLinks.length > 0) && (
                   <div className="relative" ref={mirrorMenuRef}>
                     <a 
@@ -189,7 +239,6 @@ const ResourceModal: React.FC<ResourceModalProps> = ({ resource, onClose, isDark
                   </div>
                 )}
 
-                {/* Key Protocol Logic */}
                 {(currentKeyLinks.length > 0) && (
                   <div className="relative" ref={keyMenuRef}>
                     <a 
@@ -211,7 +260,6 @@ const ResourceModal: React.FC<ResourceModalProps> = ({ resource, onClose, isDark
                   </div>
                 )}
 
-                {/* Standalone Download */}
                 {currentDownloadUrl && (
                   <a href={currentDownloadUrl} target="_blank" className={`clickable w-full py-5 flex items-center justify-center font-black tracking-[0.5em] text-[10px] ${isDarkMode ? 'bg-white text-black' : 'bg-black text-white'}`}>DOWNLOAD NOW</a>
                 )}
@@ -226,6 +274,12 @@ const ResourceModal: React.FC<ResourceModalProps> = ({ resource, onClose, isDark
           </div>
         </div>
       </div>
+      <style>{`
+        @keyframes scanHorizontal {
+          0% { left: -30%; }
+          100% { left: 130%; }
+        }
+      `}</style>
     </div>
   );
 };

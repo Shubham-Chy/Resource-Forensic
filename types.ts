@@ -31,6 +31,7 @@ export interface Episode {
   name?: string;
   driveLinks: MirrorLink[];
   keyLinks: MirrorLink[];
+  directKey?: string; // Support for direct keys per episode
 }
 
 export interface Season {
@@ -47,10 +48,11 @@ export interface Resource {
   thumbnail: string;
   downloadUrl?: string;
   youtubeId?: string;
-  driveUrl?: string; // Legacy field
-  driveLinks?: MirrorLink[]; // Legacy field for single-entry
-  getKeyUrl?: string; // Legacy field
-  keyLinks?: MirrorLink[]; // Legacy field for single-entry
+  driveUrl?: string; 
+  driveLinks?: MirrorLink[]; 
+  getKeyUrl?: string; 
+  keyLinks?: MirrorLink[]; 
+  directKey?: string; // New: Raw key to be copied directly
   createdAt?: number;
   isUpcoming?: boolean;
   

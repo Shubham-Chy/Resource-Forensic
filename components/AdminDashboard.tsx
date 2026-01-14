@@ -13,6 +13,7 @@ const AdminDashboard: React.FC<{ onLogout: () => void }> = ({ onLogout }) => {
   const [showDrive, setShowDrive] = useState(false);
   const [showKey, setShowKey] = useState(false);
   const [showDownload, setShowDownload] = useState(true);
+  const [showDirectKey, setShowDirectKey] = useState(false);
   const [isUpcoming, setIsUpcoming] = useState(false);
 
   // Anime-Specific Modality
@@ -52,6 +53,7 @@ const AdminDashboard: React.FC<{ onLogout: () => void }> = ({ onLogout }) => {
     setShowDrive(false);
     setShowKey(false);
     setShowDownload(true);
+    setShowDirectKey(false);
     setIsUpcoming(false);
     setIsSeasonBased(false);
     setSeasons([]);
@@ -65,6 +67,7 @@ const AdminDashboard: React.FC<{ onLogout: () => void }> = ({ onLogout }) => {
     setFormData(resource);
     setShowYoutube(!!resource.youtubeId);
     setShowDownload(!!resource.downloadUrl);
+    setShowDirectKey(!!resource.directKey);
     setIsUpcoming(!!resource.isUpcoming);
     setIsSeasonBased(!!resource.isSeasonBased);
 
@@ -137,6 +140,7 @@ const AdminDashboard: React.FC<{ onLogout: () => void }> = ({ onLogout }) => {
       
       if (!showYoutube) delete dataToSave.youtubeId;
       if (!showDownload) delete dataToSave.downloadUrl;
+      if (!showDirectKey) delete dataToSave.directKey;
 
       if (dataToSave.isSeasonBased) {
         dataToSave.seasons = seasons;
@@ -225,8 +229,34 @@ export const deleteResource = (id: string) => {
 
   const copyDeploymentCode = () => {
     const code = generateDeploymentCode();
-    navigator.clipboard.writeText(code);
-    alert('CODE_COPIED: Replace the content of data/resources.ts with this code. Commit and Push to GitHub.');
+    if (navigator.clipboard && window.isSecureContext) {
+      navigator.clipboard.writeText(code).then(() => {
+        alert('CODE_COPIED: Replace the content of data/resources.ts with this code. Commit and Push to GitHub.');
+      }).catch(() => {
+        fallbackCopyDeploymentCode(code);
+      });
+    } else {
+      fallbackCopyDeploymentCode(code);
+    }
+  };
+
+  const fallbackCopyDeploymentCode = (text: string) => {
+    const textArea = document.createElement("textarea");
+    textArea.value = text;
+    textArea.style.position = "fixed"; 
+    textArea.style.left = "-9999px";
+    textArea.style.top = "0";
+    document.body.appendChild(textArea);
+    textArea.focus();
+    textArea.select();
+    try {
+      document.execCommand('copy');
+      alert('CODE_COPIED: Replace the content of data/resources.ts with this code. Commit and Push to GitHub.');
+    } catch (err) {
+      console.error('Fallback copy failed', err);
+      alert('COPY_FAILED: Please manually select and copy the code below.');
+    }
+    document.body.removeChild(textArea);
   };
 
   const exportArchive = () => {
@@ -457,12 +487,13 @@ export const deleteResource = (id: string) => {
               <div className="pt-8 border-t border-white/5 space-y-10">
                 <div className="flex flex-col gap-4">
                   <span className="text-[9px] uppercase tracking-[0.6em] opacity-20 font-black">Protocol_Gates</span>
-                  <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-5 gap-4">
+                  <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-3 gap-4">
                     {[
                       { id: 'dl', label: 'DOWNLOAD', state: showDownload, set: setShowDownload },
                       { id: 'yt', label: 'YOUTUBE', state: showYoutube, set: setShowYoutube },
                       { id: 'dr', label: 'DRIVE_SOURCE', state: showDrive, set: setShowDrive },
                       { id: 'ky', label: 'ACCESS_PROTOCOL', state: showKey, set: setShowKey },
+                      { id: 'ck', label: 'CIPHER_VAULT', state: showDirectKey, set: setShowDirectKey },
                       { id: 'up', label: 'UPCOMING_STATUS', state: isUpcoming, set: setIsUpcoming },
                     ].map(t => (
                       <button key={t.id} type="button" onClick={() => t.set(!t.state)} className={`py-4 border text-[9px] font-black uppercase tracking-widest transition-all flex items-center justify-center gap-3 ${t.state ? (t.id === 'up' ? 'bg-blue-600 text-white border-blue-600' : 'bg-white text-black') : 'opacity-20 border-white/10 hover:opacity-60'}`}>
@@ -476,6 +507,13 @@ export const deleteResource = (id: string) => {
                   {showDownload && <input className="w-full bg-white/[0.05] border border-white/20 p-5 text-sm outline-none text-white tracking-widest focus:border-white transition-all uppercase font-black" placeholder="HTTPS://DIRECT_SOURCE" value={formData.downloadUrl || ''} onChange={e => setFormData({...formData, downloadUrl: e.target.value})} />}
                   {showYoutube && <input className="w-full bg-white/[0.05] border border-white/20 p-5 text-sm outline-none text-white tracking-widest focus:border-white transition-all uppercase font-black" placeholder="YOUTUBE_IDENTIFIER" value={formData.youtubeId || ''} onChange={e => setFormData({...formData, youtubeId: e.target.value})} />}
                   
+                  {showDirectKey && (
+                    <div className="space-y-3 animate-in slide-in-from-top-2 duration-300">
+                      <label className="text-[9px] uppercase tracking-[0.5em] opacity-30 font-black ml-1">Vault_Cipher_Key (Raw Key for One-Click Copy)</label>
+                      <input className="w-full bg-blue-500/[0.05] border border-blue-500/20 p-5 text-sm outline-none text-white tracking-widest focus:border-blue-500/50 transition-all uppercase font-black" placeholder="DECRYPT_KEY_EXAMPLE_123" value={formData.directKey || ''} onChange={e => setFormData({...formData, directKey: e.target.value})} />
+                    </div>
+                  )}
+
                   {showDrive && (
                     <div className="space-y-4">
                       <div className="flex justify-between items-center">
@@ -488,6 +526,7 @@ export const deleteResource = (id: string) => {
                            <input className="flex-1 bg-white/5 border border-white/10 p-4 text-sm font-black" placeholder="URL" value={dl.url} onChange={e => { const u = [...driveLinks]; u[idx].url = e.target.value; setDriveLinks(u); }} />
                            {driveLinks.length > 1 && (
                              <button 
+                               type="button"
                                onClick={() => setDriveLinks(driveLinks.filter((_, i) => i !== idx))}
                                className="clickable w-14 h-14 border border-red-600/20 bg-red-600/5 hover:bg-red-600 hover:text-white flex items-center justify-center transition-all flex-shrink-0"
                              >
@@ -511,6 +550,7 @@ export const deleteResource = (id: string) => {
                            <input className="flex-1 bg-white/5 border border-white/10 p-4 text-sm font-black" placeholder="URL" value={kl.url} onChange={e => { const u = [...keyLinks]; u[idx].url = e.target.value; setKeyLinks(u); }} />
                            {keyLinks.length > 1 && (
                              <button 
+                               type="button"
                                onClick={() => setKeyLinks(keyLinks.filter((_, i) => i !== idx))}
                                className="clickable w-14 h-14 border border-red-600/20 bg-red-600/5 hover:bg-red-600 hover:text-white flex items-center justify-center transition-all flex-shrink-0"
                              >
@@ -540,8 +580,8 @@ export const deleteResource = (id: string) => {
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
                   <div className="space-y-6">
                     <span className="text-[9px] font-black uppercase tracking-[0.4em] opacity-40">LOCAL_MAINTENANCE</span>
-                    <button onClick={exportArchive} className="w-full py-5 border border-white/10 font-black uppercase tracking-widest text-[11px] hover:bg-white hover:text-black transition-all">EXPORT_ARCHIVE_JSON</button>
-                    <button onClick={() => fileInputRef.current?.click()} className="w-full py-5 border border-white/10 font-black uppercase tracking-widest text-[11px] hover:bg-white hover:text-black transition-all">RESTORE_FROM_BACKUP</button>
+                    <button type="button" onClick={exportArchive} className="w-full py-5 border border-white/10 font-black uppercase tracking-widest text-[11px] hover:bg-white hover:text-black transition-all">EXPORT_ARCHIVE_JSON</button>
+                    <button type="button" onClick={() => fileInputRef.current?.click()} className="w-full py-5 border border-white/10 font-black uppercase tracking-widest text-[11px] hover:bg-white hover:text-black transition-all">RESTORE_FROM_BACKUP</button>
                     <input type="file" ref={fileInputRef} className="hidden" accept=".json" onChange={handleImport} />
                   </div>
                   <div className="p-8 border border-white/10 bg-white/[0.03] flex flex-col gap-6 group">
@@ -550,7 +590,7 @@ export const deleteResource = (id: string) => {
                         <span className="text-[10px] font-black uppercase tracking-widest text-blue-400">GITHUB_GLOBAL_SYNC</span>
                      </div>
                      <p className="text-[10px] opacity-20 group-hover:opacity-40 transition-opacity uppercase leading-relaxed font-black">Push local registry changes to the production repository for global distribution.</p>
-                     <button onClick={() => setShowDeployModal(true)} className="w-full mt-auto py-5 bg-blue-500/10 border border-blue-500/30 text-[10px] font-black uppercase tracking-[0.5em] text-blue-400 hover:bg-blue-500 hover:text-white transition-all">PREPARE_GLOBAL_DEPLOYMENT</button>
+                     <button type="button" onClick={() => setShowDeployModal(true)} className="w-full mt-auto py-5 bg-blue-500/10 border border-blue-500/30 text-[10px] font-black uppercase tracking-[0.5em] text-blue-400 hover:bg-blue-500 hover:text-white transition-all">PREPARE_GLOBAL_DEPLOYMENT</button>
                   </div>
                 </div>
              </div>
@@ -570,8 +610,9 @@ export const deleteResource = (id: string) => {
                       </div>
                    </div>
                    <div className="flex gap-4">
-                     <button onClick={() => startEdit(res)} className="text-[9px] text-white/30 hover:text-white font-black tracking-widest p-4 transition-all">EDIT</button>
+                     <button type="button" onClick={() => startEdit(res)} className="text-[9px] text-white/30 hover:text-white font-black tracking-widest p-4 transition-all">EDIT</button>
                      <button 
+                        type="button"
                         onClick={() => handleDelete(res.id)} 
                         className="clickable w-12 h-12 border border-red-600/20 bg-red-600/5 hover:bg-red-600 hover:text-white flex items-center justify-center transition-all"
                      >
@@ -591,7 +632,7 @@ export const deleteResource = (id: string) => {
           <div className="relative w-full max-w-5xl h-[80vh] bg-[#080808] border border-white/10 flex flex-col animate-in zoom-in-95 duration-500">
             <div className="p-10 border-b border-white/5 flex justify-between items-center">
                <h3 className="text-2xl font-black uppercase tracking-widest text-blue-400">GITHUB_SYNC_GENERATOR</h3>
-               <button onClick={() => setShowDeployModal(false)} className="p-2 opacity-30 hover:opacity-100">
+               <button type="button" onClick={() => setShowDeployModal(false)} className="p-2 opacity-30 hover:opacity-100">
                   <svg width="24" height="24" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path d="M6 18L18 6M6 6l12 12" /></svg>
                </button>
             </div>
@@ -600,7 +641,7 @@ export const deleteResource = (id: string) => {
             </div>
             <div className="p-10 border-t border-white/5 flex items-center justify-between bg-white/[0.01]">
                <span className="text-[9px] opacity-20 font-black uppercase tracking-[0.3em]">REPLACE: data/resources.ts // PUSH TO MASTER</span>
-               <button onClick={copyDeploymentCode} className="px-16 py-6 bg-white text-black font-black tracking-[1em] uppercase text-xs hover:bg-zinc-200 transition-all">COPY_PROTOCOL_CODE</button>
+               <button type="button" onClick={copyDeploymentCode} className="px-16 py-6 bg-white text-black font-black tracking-[1em] uppercase text-xs hover:bg-zinc-200 transition-all">COPY_PROTOCOL_CODE</button>
             </div>
           </div>
         </div>
