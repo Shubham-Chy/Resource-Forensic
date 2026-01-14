@@ -6,6 +6,36 @@ import { Resource, ResourceCategory } from '../types';
  */
 const INITIAL_RESOURCES: Resource[] = [
   {
+    "category": "Anime Clips",
+    "name": "weathering with you",
+    "description": "Coming soon!",
+    "thumbnail": "https://i.ibb.co/G4W46dFk/Uio-Gh-V.webp",
+    "id": "res-1768370123030",
+    "createdAt": 1768370123030,
+    "isUpcoming": true,
+    "isSeasonBased": false
+  },
+  {
+    "category": "Anime Clips",
+    "name": "i want to eat your pancreas",
+    "thumbnail": "https://i.ibb.co/DPG8k5gN/804bd2ac225c4b168243ea9f7e5953b7.webp",
+    "description": "Coming soon!",
+    "id": "res-1768370059993",
+    "createdAt": 1768370059993,
+    "isUpcoming": true,
+    "isSeasonBased": false
+  },
+  {
+    "category": "Anime Clips",
+    "name": "The Garden of Words",
+    "description": "Coming soon!",
+    "thumbnail": "https://i.ibb.co/1tTQ6KQS/MV5-BYjdi-MDdl-MDIt-OGM4-Ny00-Ym-E4-LTk0-MTEt-MGRh-M2-Y4-OWZk-ZDZk-Xk-Ey-Xk-Fqc-Gc.webp",
+    "id": "res-1768369982753",
+    "createdAt": 1768369982753,
+    "isUpcoming": true,
+    "isSeasonBased": false
+  },
+  {
     "category": "Packs",
     "name": "Core Transitions Pack - AAPOWER",
     "thumbnail": "https://i.ibb.co/vC5K9qth/Videohive-Core-Transitions-Pack-350-Dynamic-Seamless-Transitions-for-After-Effects-AAPower.jpg",
