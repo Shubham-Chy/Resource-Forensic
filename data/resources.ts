@@ -8,32 +8,56 @@ const INITIAL_RESOURCES: Resource[] = [
   {
     "category": "Anime Clips",
     "name": "weathering with you",
-    "description": "Coming soon!",
+    "description": "Welcome to the ultimate editing resource for Weathering With You.\nWe’re dedicated to supporting the anime editing community by providing high-quality, upscaled, and raw clips from the film—completely free.",
     "thumbnail": "https://i.ibb.co/G4W46dFk/Uio-Gh-V.webp",
     "id": "res-1768370123030",
     "createdAt": 1768370123030,
-    "isUpcoming": true,
-    "isSeasonBased": false
+    "isUpcoming": false,
+    "isSeasonBased": false,
+    "directKey": "hNvp62Ry5z16_bqV-VdEcg",
+    "driveLinks": [
+      {
+        "label": "MEGA",
+        "url": "https://mega.nz/folder/x6hxBIaA"
+      }
+    ],
+    "driveUrl": "https://mega.nz/folder/x6hxBIaA"
   },
   {
     "category": "Anime Clips",
     "name": "i want to eat your pancreas",
     "thumbnail": "https://i.ibb.co/DPG8k5gN/804bd2ac225c4b168243ea9f7e5953b7.webp",
-    "description": "Coming soon!",
+    "description": "Welcome to the ultimate editing resource for I Want to Eat Your Pancreas.\nWe’re dedicated to supporting the anime editing community by providing high-quality, upscaled, and raw clips from the film—completely free.",
     "id": "res-1768370059993",
     "createdAt": 1768370059993,
-    "isUpcoming": true,
-    "isSeasonBased": false
+    "isUpcoming": false,
+    "isSeasonBased": false,
+    "directKey": "u6Te8H9J6JKttwLeRHDJ6Q",
+    "driveLinks": [
+      {
+        "label": "MEGA",
+        "url": "https://mega.nz/folder/wuomXYQI"
+      }
+    ],
+    "driveUrl": "https://mega.nz/folder/wuomXYQI"
   },
   {
     "category": "Anime Clips",
     "name": "The Garden of Words",
-    "description": "Coming soon!",
+    "description": "Welcome to the ultimate editing resource for The Garden of Words.\nWe’re dedicated to supporting the anime editing community by providing high-quality, upscaled, and raw clips from the film—completely free.",
     "thumbnail": "https://i.ibb.co/1tTQ6KQS/MV5-BYjdi-MDdl-MDIt-OGM4-Ny00-Ym-E4-LTk0-MTEt-MGRh-M2-Y4-OWZk-ZDZk-Xk-Ey-Xk-Fqc-Gc.webp",
     "id": "res-1768369982753",
     "createdAt": 1768369982753,
-    "isUpcoming": true,
-    "isSeasonBased": false
+    "isUpcoming": false,
+    "isSeasonBased": false,
+    "directKey": "a25IVqFdMh4NbqZUd5uR5g",
+    "driveLinks": [
+      {
+        "label": "MEGA",
+        "url": "https://mega.nz/folder/tiYWiCIa"
+      }
+    ],
+    "driveUrl": "https://mega.nz/folder/tiYWiCIa"
   },
   {
     "category": "Packs",
