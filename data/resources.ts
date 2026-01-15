@@ -6,6 +6,99 @@ import { Resource, ResourceCategory } from '../types';
  */
 const INITIAL_RESOURCES: Resource[] = [
   {
+    "category": "Plugins",
+    "name": "Borisfx sapphire - 2026",
+    "downloadUrl": "https://mega.nz/folder/bmoklJRS",
+    "youtubeId": "k_ePmF8GNo8",
+    "thumbnail": "https://i.ibb.co/tMzgWxnY/Boris-FX-Sapphire-Plug-ins-2026-749x420.jpg",
+    "description": "Sapphire is the latest major upgrade for the legendary suite of VFX plug-ins. Key features include a revamped and enhanced LensFlare and Flare Designer, new PixelSort digital glitch art effect, new WhipLash transition, new animating shape tool for Effect and Transition Builder, new Mocha Essentials workspace with new spline tools like magnetic edge snapping, and is optimized for maximum CPU and GPU performance.",
+    "id": "res-1768474545360",
+    "createdAt": 1768474545360,
+    "isUpcoming": false,
+    "isSeasonBased": false,
+    "keyLinks": [
+      {
+        "label": "ACCESS KEY",
+        "url": "https://work.ink/2bBx/borisfx-saphhire2026"
+      }
+    ],
+    "getKeyUrl": "https://work.ink/2bBx/borisfx-saphhire2026"
+  },
+  {
+    "category": "Plugins",
+    "name": "boris fx continuum - 2026",
+    "downloadUrl": "https://mega.nz/folder/PjQGwDyL",
+    "youtubeId": "78hEM5i2WPE",
+    "thumbnail": "https://i.ibb.co/HfPmKKfP/Boris-FX-Continuum-Complete-Plug-ins-2026-800x474.jpg",
+    "description": "Continuum plugins are a one-stop shop for your content creation needs. The post production industry’s most complete plugin package includes over 300+ effects, 40+ transitions, and 5000+ presets. The speedy and easy to use toolset is fully GPU-accelerated with Adobe Multi-Frame Rendering and native Apple M1 support.",
+    "id": "res-1768474371833",
+    "createdAt": 1768474371833,
+    "isUpcoming": false,
+    "isSeasonBased": false,
+    "keyLinks": [
+      {
+        "label": "ACCESS KEY",
+        "url": "https://work.ink/2bBx/borisfx-bcc-2026"
+      }
+    ],
+    "getKeyUrl": "https://work.ink/2bBx/borisfx-bcc-2026"
+  },
+  {
+    "category": "Packs",
+    "name": "Creative 3D transiton - aapower",
+    "downloadUrl": "https://mega.nz/folder/nn4m3ZbL",
+    "youtubeId": "6SjpHpLkBAo",
+    "thumbnail": "https://i.ibb.co/kg8kF6yY/Videohive-Creative-3-D-Transitions-50-Dynamic-Transitions-for-After-Effects-AAPower.jpg",
+    "description": "Creative 3D Transitions is a professional pack of 50 realistic camera transitions for Adobe After Effects, designed to bring cinematic depth and motion into your edits. Each transition moves through detailed 3D environments — from digital screens to paper textures — giving your projects a unique, immersive look.",
+    "id": "res-1768474136898",
+    "createdAt": 1768474136898,
+    "isUpcoming": false,
+    "isSeasonBased": false,
+    "keyLinks": [
+      {
+        "label": "ACCESS KEY",
+        "url": "https://work.ink/2bBx/creative-3d-transition-aapower"
+      }
+    ],
+    "getKeyUrl": "https://work.ink/2bBx/creative-3d-transition-aapower"
+  },
+  {
+    "category": "Software",
+    "name": "Red GIant universe - 2026",
+    "description": "A library that integrates its famous tools and plugins. And the special effects library (such as special effects, transitions, color grading, light effects, particle presets, etc.) is constantly expanding. The library has currently been updated with more than 100 sets of special effects and transition effect plug-ins.",
+    "thumbnail": "https://i.ibb.co/7JsnxCjQ/RG-Universe.jpg",
+    "downloadUrl": "https://mega.nz/folder/Oj5VyZyA",
+    "id": "res-1768473860780",
+    "createdAt": 1768473860780,
+    "isUpcoming": false,
+    "isSeasonBased": false,
+    "keyLinks": [
+      {
+        "label": "ACCESS KEY",
+        "url": "https://work.ink/2bBx/red-giant-universe"
+      }
+    ],
+    "getKeyUrl": "https://work.ink/2bBx/red-giant-universe"
+  },
+  {
+    "category": "Plugins",
+    "name": "Red giant - 2026",
+    "downloadUrl": "https://mega.nz/folder/76okkZSR",
+    "description": "A library that integrates its famous tools and plugins. And the special effects library (such as special effects, transitions, color grading, light effects, particle presets, etc.) is constantly expanding. The library has currently been updated with more than 100 sets of special effects and transition effect plug-ins.",
+    "thumbnail": "https://i.ibb.co/rRLhd1v8/Red-Giant-2026.jpg",
+    "id": "res-1768473761303",
+    "createdAt": 1768473761303,
+    "isUpcoming": false,
+    "isSeasonBased": false,
+    "keyLinks": [
+      {
+        "label": "ACCESS KEY",
+        "url": "https://work.ink/2bBx/red-giant"
+      }
+    ],
+    "getKeyUrl": "https://work.ink/2bBx/red-giant"
+  },
+  {
     "category": "Anime Clips",
     "name": "weathering with you",
     "description": "Welcome to the ultimate editing resource for Weathering With You.\nWe’re dedicated to supporting the anime editing community by providing high-quality, upscaled, and raw clips from the film—completely free.",
@@ -21,7 +114,9 @@ const INITIAL_RESOURCES: Resource[] = [
         "url": "https://mega.nz/folder/x6hxBIaA"
       }
     ],
-    "driveUrl": "https://mega.nz/folder/x6hxBIaA"
+    "driveUrl": "https://mega.nz/folder/x6hxBIaA",
+    "videoQuality": "FULL HD",
+    "fileSize": "4.17GB"
   },
   {
     "category": "Anime Clips",
@@ -39,7 +134,9 @@ const INITIAL_RESOURCES: Resource[] = [
         "url": "https://mega.nz/folder/wuomXYQI"
       }
     ],
-    "driveUrl": "https://mega.nz/folder/wuomXYQI"
+    "driveUrl": "https://mega.nz/folder/wuomXYQI",
+    "videoQuality": "FULL HD",
+    "fileSize": "2.45GB"
   },
   {
     "category": "Anime Clips",
@@ -57,7 +154,9 @@ const INITIAL_RESOURCES: Resource[] = [
         "url": "https://mega.nz/folder/tiYWiCIa"
       }
     ],
-    "driveUrl": "https://mega.nz/folder/tiYWiCIa"
+    "driveUrl": "https://mega.nz/folder/tiYWiCIa",
+    "videoQuality": "FULL HD",
+    "fileSize": "2.32GB"
   },
   {
     "category": "Packs",
@@ -81,7 +180,7 @@ const INITIAL_RESOURCES: Resource[] = [
   {
     "category": "Anime Clips",
     "name": "Jujutsu Kaisen",
-    "thumbnail": "https://i.ibb.co/v4TM1dNx/512px-Jujutsu-Kaisen-Japanese-logo-svg.webp",
+    "thumbnail": "https://i.ibb.co/zVhgB29H/MV5-BMj-Bl-NTEx-MDAt-MWZj-Zi00-MDc5-LWFk-Mjgt-ZDU0-ZWQ5-ODk3-YWY5-Xk-Ey-Xk-Fqc-Gc.webp",
     "description": "Welcome to the ultimate editing hub for Jujutsu Kaisen. Built for editors, we provide high-quality, upscaled, and raw JJK clips—100% free for creative use.",
     "id": "res-1768189001252",
     "createdAt": 1768189001252,
@@ -148,7 +247,17 @@ const INITIAL_RESOURCES: Resource[] = [
         "url": "https://mega.nz/folder/SU0h1bqS"
       }
     ],
-    "driveUrl": "https://mega.nz/folder/W9g0hTyL"
+    "driveUrl": "https://mega.nz/folder/W9g0hTyL",
+    "videoQuality": "4K",
+    "fileSize": "73.5GB",
+    "isUpcoming": false,
+    "isSeasonBased": false,
+    "keyLinks": [
+      {
+        "label": "ACCESS KEY",
+        "url": "https://work.ink/2bBx/suzume"
+      }
+    ]
   },
   {
     "category": "Software",
@@ -175,7 +284,9 @@ const INITIAL_RESOURCES: Resource[] = [
     "description": "Free Download Adobe After Effects CC Pre-Activated offline installer for Windows.",
     "downloadUrl": "https://work.ink/2bBx/after-effect-2024",
     "id": "res-1768042729258",
-    "createdAt": 1768042729258
+    "createdAt": 1768042729258,
+    "isUpcoming": false,
+    "isSeasonBased": false
   },
   {
     "category": "Anime Clips",
@@ -194,7 +305,7 @@ const STORAGE_KEY = 'resource_forensic_vault';
 const VERSION_KEY = 'resource_forensic_version';
 
 // Determine version based on newest item timestamp to force cache bypass for returning users
-const CURRENT_VERSION = Math.max(...INITIAL_RESOURCES.map((r: any) => r.createdAt || 0), 0);
+const CURRENT_VERSION = Math.max(...INITIAL_RESOURCES.map(r => r.createdAt || 0), 0);
 
 export const getResources = (): Resource[] => {
   const stored = localStorage.getItem(STORAGE_KEY);

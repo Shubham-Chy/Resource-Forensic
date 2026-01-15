@@ -52,12 +52,17 @@
             margin: 0;
             overflow-x: hidden;
             font-family: 'Inter', 'Noto Sans JP', sans-serif;
-            cursor: none; 
+            cursor: none !important; 
             -webkit-user-select: none;
             -moz-user-select: none;
             -ms-user-select: none;
             user-select: none;
             transition: background-color 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        /* Ultimate Cursor Suppression */
+        * {
+            cursor: none !important;
         }
 
         input, textarea, [contenteditable="true"] {
