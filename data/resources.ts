@@ -63,7 +63,7 @@ const INITIAL_RESOURCES: Resource[] = [
     "getKeyUrl": "https://work.ink/2bBx/creative-3d-transition-aapower"
   },
   {
-    "category": "Software",
+    "category": "Plugins",
     "name": "Red GIant universe - 2026",
     "description": "A library that integrates its famous tools and plugins. And the special effects library (such as special effects, transitions, color grading, light effects, particle presets, etc.) is constantly expanding. The library has currently been updated with more than 100 sets of special effects and transition effect plug-ins.",
     "thumbnail": "https://i.ibb.co/7JsnxCjQ/RG-Universe.jpg",
