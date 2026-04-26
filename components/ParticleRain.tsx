@@ -1,4 +1,4 @@
-import React, { useEffect, useRef } from 'react';
+import React, { useEffect, useRef } from "react";
 
 interface ParticleRainProps {
   isDarkMode?: boolean;
@@ -11,7 +11,7 @@ const ParticleRain: React.FC<ParticleRainProps> = ({ isDarkMode = true }) => {
     const canvas = canvasRef.current;
     if (!canvas) return;
 
-    const ctx = canvas.getContext('2d');
+    const ctx = canvas.getContext("2d");
     if (!ctx) return;
 
     let animationFrameId: number;
@@ -49,11 +49,19 @@ const ParticleRain: React.FC<ParticleRainProps> = ({ isDarkMode = true }) => {
         this.verticalSpeed = 0.4 + Math.random() * 0.7; // Significantly slower falling
         this.rotation = Math.random() * Math.PI;
         this.rotationSpeed = Math.random() * 0.01; // Slower rotation
-        
+
         // Forensic shades: Pure white and various grays
-        const colors = isDarkMode 
-          ? ['rgba(255, 255, 255, ', 'rgba(200, 200, 200, ', 'rgba(150, 150, 150, ']
-          : ['rgba(255, 255, 255, ', 'rgba(220, 220, 220, ', 'rgba(180, 180, 180, '];
+        const colors = isDarkMode
+          ? [
+              "rgba(255, 255, 255, ",
+              "rgba(200, 200, 200, ",
+              "rgba(150, 150, 150, ",
+            ]
+          : [
+              "rgba(255, 255, 255, ",
+              "rgba(220, 220, 220, ",
+              "rgba(180, 180, 180, ",
+            ];
         this.color = colors[Math.floor(Math.random() * colors.length)];
       }
 
@@ -77,13 +85,13 @@ const ParticleRain: React.FC<ParticleRainProps> = ({ isDarkMode = true }) => {
         ctx.translate(this.x, this.y);
         ctx.rotate(this.rotation);
         ctx.scale(Math.sin(this.flip), 1);
-        
+
         ctx.beginPath();
         // Sakura petal geometry
         ctx.moveTo(0, 0);
         ctx.bezierCurveTo(this.w / 2, -this.h, this.w, 0, 0, this.h);
         ctx.bezierCurveTo(-this.w, 0, -this.w / 2, -this.h, 0, 0);
-        
+
         ctx.fillStyle = `${this.color}${this.opacity})`;
         ctx.fill();
         ctx.restore();
@@ -105,12 +113,12 @@ const ParticleRain: React.FC<ParticleRainProps> = ({ isDarkMode = true }) => {
       animationFrameId = requestAnimationFrame(animate);
     };
 
-    window.addEventListener('resize', resize);
+    window.addEventListener("resize", resize);
     resize();
     animate();
 
     return () => {
-      window.removeEventListener('resize', resize);
+      window.removeEventListener("resize", resize);
       cancelAnimationFrame(animationFrameId);
     };
   }, [isDarkMode]);
@@ -119,7 +127,7 @@ const ParticleRain: React.FC<ParticleRainProps> = ({ isDarkMode = true }) => {
     <canvas
       ref={canvasRef}
       className="fixed inset-0 pointer-events-none z-[1]"
-      style={{ mixBlendMode: 'normal' }}
+      style={{ mixBlendMode: "normal" }}
     />
   );
 };

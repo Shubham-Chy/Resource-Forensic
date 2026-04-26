@@ -1,23 +1,23 @@
 export enum ResourceCategory {
-  SOFTWARE = 'Software',
-  PLUGINS = 'Plugins',
-  SCRIPTS = 'Scripts',
-  EXTENSIONS = 'Extensions',
-  TEMPLATES = 'Templates',
-  PACKS = 'Packs',
-  LEAKS = 'Leaks',
-  ANIME_CLIPS = 'Anime Clips'
+  SOFTWARE = "Software",
+  PLUGINS = "Plugins",
+  SCRIPTS = "Scripts",
+  EXTENSIONS = "Extensions",
+  TEMPLATES = "Templates",
+  PACKS = "Packs",
+  LEAKS = "Leaks",
+  ANIME_CLIPS = "Anime Clips",
 }
 
 export const CATEGORY_JP: Record<string, string> = {
-  'Software': 'ソフトウェア',
-  'Plugins': 'プラグイン',
-  'Scripts': 'スクリプト',
-  'Extensions': '拡張機能',
-  'Templates': 'テンプレート',
-  'Packs': 'パック',
-  'Leaks': 'リーク',
-  'Anime Clips': 'アニメクリップ'
+  Software: "ソフトウェア",
+  Plugins: "プラグイン",
+  Scripts: "スクリプト",
+  Extensions: "拡張機能",
+  Templates: "テンプレート",
+  Packs: "パック",
+  Leaks: "リーク",
+  "Anime Clips": "アニメクリップ",
 };
 
 export interface MirrorLink {
@@ -48,14 +48,14 @@ export interface Resource {
   thumbnail: string;
   downloadUrl?: string;
   youtubeId?: string;
-  driveUrl?: string; 
-  driveLinks?: MirrorLink[]; 
-  getKeyUrl?: string; 
-  keyLinks?: MirrorLink[]; 
+  driveUrl?: string;
+  driveLinks?: MirrorLink[];
+  getKeyUrl?: string;
+  keyLinks?: MirrorLink[];
   directKey?: string; // New: Raw key to be copied directly
   createdAt?: number;
   isUpcoming?: boolean;
-  
+
   // Anime Specific
   isSeasonBased?: boolean;
   seasons?: Season[];

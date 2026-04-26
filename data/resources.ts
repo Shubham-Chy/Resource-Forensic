@@ -1,4 +1,4 @@
-import { Resource, ResourceCategory } from '../types';
+import { Resource, ResourceCategory } from "../types";
 
 /**
  * PRODUCTION ARCHIVE DATA
@@ -6,306 +6,333 @@ import { Resource, ResourceCategory } from '../types';
  */
 const INITIAL_RESOURCES: Resource[] = [
   {
-    "category": "Plugins",
-    "name": "Borisfx sapphire - 2026",
-    "downloadUrl": "https://mega.nz/folder/bmoklJRS",
-    "youtubeId": "k_ePmF8GNo8",
-    "thumbnail": "https://i.ibb.co/tMzgWxnY/Boris-FX-Sapphire-Plug-ins-2026-749x420.jpg",
-    "description": "Sapphire is the latest major upgrade for the legendary suite of VFX plug-ins. Key features include a revamped and enhanced LensFlare and Flare Designer, new PixelSort digital glitch art effect, new WhipLash transition, new animating shape tool for Effect and Transition Builder, new Mocha Essentials workspace with new spline tools like magnetic edge snapping, and is optimized for maximum CPU and GPU performance.",
-    "id": "res-1768474545360",
-    "createdAt": 1768474545360,
-    "isUpcoming": false,
-    "isSeasonBased": false,
-    "keyLinks": [
+    category: "Plugins",
+    name: "Borisfx sapphire - 2026",
+    downloadUrl: "https://mega.nz/folder/bmoklJRS",
+    youtubeId: "k_ePmF8GNo8",
+    thumbnail:
+      "https://i.ibb.co/tMzgWxnY/Boris-FX-Sapphire-Plug-ins-2026-749x420.jpg",
+    description:
+      "Sapphire is the latest major upgrade for the legendary suite of VFX plug-ins. Key features include a revamped and enhanced LensFlare and Flare Designer, new PixelSort digital glitch art effect, new WhipLash transition, new animating shape tool for Effect and Transition Builder, new Mocha Essentials workspace with new spline tools like magnetic edge snapping, and is optimized for maximum CPU and GPU performance.",
+    id: "res-1768474545360",
+    createdAt: 1768474545360,
+    isUpcoming: false,
+    isSeasonBased: false,
+    keyLinks: [
       {
-        "label": "ACCESS KEY",
-        "url": "https://work.ink/2bBx/borisfx-saphhire2026"
-      }
+        label: "ACCESS KEY",
+        url: "https://work.ink/2bBx/borisfx-saphhire2026",
+      },
     ],
-    "getKeyUrl": "https://work.ink/2bBx/borisfx-saphhire2026"
+    getKeyUrl: "https://work.ink/2bBx/borisfx-saphhire2026",
   },
   {
-    "category": "Plugins",
-    "name": "boris fx continuum - 2026",
-    "downloadUrl": "https://mega.nz/folder/PjQGwDyL",
-    "youtubeId": "78hEM5i2WPE",
-    "thumbnail": "https://i.ibb.co/HfPmKKfP/Boris-FX-Continuum-Complete-Plug-ins-2026-800x474.jpg",
-    "description": "Continuum plugins are a one-stop shop for your content creation needs. The post production industry’s most complete plugin package includes over 300+ effects, 40+ transitions, and 5000+ presets. The speedy and easy to use toolset is fully GPU-accelerated with Adobe Multi-Frame Rendering and native Apple M1 support.",
-    "id": "res-1768474371833",
-    "createdAt": 1768474371833,
-    "isUpcoming": false,
-    "isSeasonBased": false,
-    "keyLinks": [
+    category: "Plugins",
+    name: "boris fx continuum - 2026",
+    downloadUrl: "https://mega.nz/folder/PjQGwDyL",
+    youtubeId: "78hEM5i2WPE",
+    thumbnail:
+      "https://i.ibb.co/HfPmKKfP/Boris-FX-Continuum-Complete-Plug-ins-2026-800x474.jpg",
+    description:
+      "Continuum plugins are a one-stop shop for your content creation needs. The post production industry’s most complete plugin package includes over 300+ effects, 40+ transitions, and 5000+ presets. The speedy and easy to use toolset is fully GPU-accelerated with Adobe Multi-Frame Rendering and native Apple M1 support.",
+    id: "res-1768474371833",
+    createdAt: 1768474371833,
+    isUpcoming: false,
+    isSeasonBased: false,
+    keyLinks: [
       {
-        "label": "ACCESS KEY",
-        "url": "https://work.ink/2bBx/borisfx-bcc-2026"
-      }
+        label: "ACCESS KEY",
+        url: "https://work.ink/2bBx/borisfx-bcc-2026",
+      },
     ],
-    "getKeyUrl": "https://work.ink/2bBx/borisfx-bcc-2026"
+    getKeyUrl: "https://work.ink/2bBx/borisfx-bcc-2026",
   },
   {
-    "category": "Packs",
-    "name": "Creative 3D transiton - aapower",
-    "downloadUrl": "https://mega.nz/folder/nn4m3ZbL",
-    "youtubeId": "6SjpHpLkBAo",
-    "thumbnail": "https://i.ibb.co/kg8kF6yY/Videohive-Creative-3-D-Transitions-50-Dynamic-Transitions-for-After-Effects-AAPower.jpg",
-    "description": "Creative 3D Transitions is a professional pack of 50 realistic camera transitions for Adobe After Effects, designed to bring cinematic depth and motion into your edits. Each transition moves through detailed 3D environments — from digital screens to paper textures — giving your projects a unique, immersive look.",
-    "id": "res-1768474136898",
-    "createdAt": 1768474136898,
-    "isUpcoming": false,
-    "isSeasonBased": false,
-    "keyLinks": [
+    category: "Packs",
+    name: "Creative 3D transiton - aapower",
+    downloadUrl: "https://mega.nz/folder/nn4m3ZbL",
+    youtubeId: "6SjpHpLkBAo",
+    thumbnail:
+      "https://i.ibb.co/kg8kF6yY/Videohive-Creative-3-D-Transitions-50-Dynamic-Transitions-for-After-Effects-AAPower.jpg",
+    description:
+      "Creative 3D Transitions is a professional pack of 50 realistic camera transitions for Adobe After Effects, designed to bring cinematic depth and motion into your edits. Each transition moves through detailed 3D environments — from digital screens to paper textures — giving your projects a unique, immersive look.",
+    id: "res-1768474136898",
+    createdAt: 1768474136898,
+    isUpcoming: false,
+    isSeasonBased: false,
+    keyLinks: [
       {
-        "label": "ACCESS KEY",
-        "url": "https://work.ink/2bBx/creative-3d-transition-aapower"
-      }
+        label: "ACCESS KEY",
+        url: "https://work.ink/2bBx/creative-3d-transition-aapower",
+      },
     ],
-    "getKeyUrl": "https://work.ink/2bBx/creative-3d-transition-aapower"
+    getKeyUrl: "https://work.ink/2bBx/creative-3d-transition-aapower",
   },
   {
-    "category": "Plugins",
-    "name": "Red GIant universe - 2026",
-    "description": "A library that integrates its famous tools and plugins. And the special effects library (such as special effects, transitions, color grading, light effects, particle presets, etc.) is constantly expanding. The library has currently been updated with more than 100 sets of special effects and transition effect plug-ins.",
-    "thumbnail": "https://i.ibb.co/7JsnxCjQ/RG-Universe.jpg",
-    "downloadUrl": "https://mega.nz/folder/Oj5VyZyA",
-    "id": "res-1768473860780",
-    "createdAt": 1768473860780,
-    "isUpcoming": false,
-    "isSeasonBased": false,
-    "keyLinks": [
+    category: "Plugins",
+    name: "Red GIant universe - 2026",
+    description:
+      "A library that integrates its famous tools and plugins. And the special effects library (such as special effects, transitions, color grading, light effects, particle presets, etc.) is constantly expanding. The library has currently been updated with more than 100 sets of special effects and transition effect plug-ins.",
+    thumbnail: "https://i.ibb.co/7JsnxCjQ/RG-Universe.jpg",
+    downloadUrl: "https://mega.nz/folder/Oj5VyZyA",
+    id: "res-1768473860780",
+    createdAt: 1768473860780,
+    isUpcoming: false,
+    isSeasonBased: false,
+    keyLinks: [
       {
-        "label": "ACCESS KEY",
-        "url": "https://work.ink/2bBx/red-giant-universe"
-      }
+        label: "ACCESS KEY",
+        url: "https://work.ink/2bBx/red-giant-universe",
+      },
     ],
-    "getKeyUrl": "https://work.ink/2bBx/red-giant-universe"
+    getKeyUrl: "https://work.ink/2bBx/red-giant-universe",
   },
   {
-    "category": "Plugins",
-    "name": "Red giant - 2026",
-    "downloadUrl": "https://mega.nz/folder/76okkZSR",
-    "description": "A library that integrates its famous tools and plugins. And the special effects library (such as special effects, transitions, color grading, light effects, particle presets, etc.) is constantly expanding. The library has currently been updated with more than 100 sets of special effects and transition effect plug-ins.",
-    "thumbnail": "https://i.ibb.co/rRLhd1v8/Red-Giant-2026.jpg",
-    "id": "res-1768473761303",
-    "createdAt": 1768473761303,
-    "isUpcoming": false,
-    "isSeasonBased": false,
-    "keyLinks": [
+    category: "Plugins",
+    name: "Red giant - 2026",
+    downloadUrl: "https://mega.nz/folder/76okkZSR",
+    description:
+      "A library that integrates its famous tools and plugins. And the special effects library (such as special effects, transitions, color grading, light effects, particle presets, etc.) is constantly expanding. The library has currently been updated with more than 100 sets of special effects and transition effect plug-ins.",
+    thumbnail: "https://i.ibb.co/rRLhd1v8/Red-Giant-2026.jpg",
+    id: "res-1768473761303",
+    createdAt: 1768473761303,
+    isUpcoming: false,
+    isSeasonBased: false,
+    keyLinks: [
       {
-        "label": "ACCESS KEY",
-        "url": "https://work.ink/2bBx/red-giant"
-      }
+        label: "ACCESS KEY",
+        url: "https://work.ink/2bBx/red-giant",
+      },
     ],
-    "getKeyUrl": "https://work.ink/2bBx/red-giant"
+    getKeyUrl: "https://work.ink/2bBx/red-giant",
   },
   {
-    "category": "Anime Clips",
-    "name": "weathering with you",
-    "description": "Welcome to the ultimate editing resource for Weathering With You.\nWe’re dedicated to supporting the anime editing community by providing high-quality, upscaled, and raw clips from the film—completely free.",
-    "thumbnail": "https://i.ibb.co/G4W46dFk/Uio-Gh-V.webp",
-    "id": "res-1768370123030",
-    "createdAt": 1768370123030,
-    "isUpcoming": false,
-    "isSeasonBased": false,
-    "directKey": "hNvp62Ry5z16_bqV-VdEcg",
-    "driveLinks": [
+    category: "Anime Clips",
+    name: "weathering with you",
+    description:
+      "Welcome to the ultimate editing resource for Weathering With You.\nWe’re dedicated to supporting the anime editing community by providing high-quality, upscaled, and raw clips from the film—completely free.",
+    thumbnail: "https://i.ibb.co/G4W46dFk/Uio-Gh-V.webp",
+    id: "res-1768370123030",
+    createdAt: 1768370123030,
+    isUpcoming: false,
+    isSeasonBased: false,
+    directKey: "hNvp62Ry5z16_bqV-VdEcg",
+    driveLinks: [
       {
-        "label": "MEGA",
-        "url": "https://mega.nz/folder/x6hxBIaA"
-      }
+        label: "MEGA",
+        url: "https://mega.nz/folder/x6hxBIaA",
+      },
     ],
-    "driveUrl": "https://mega.nz/folder/x6hxBIaA",
-    "videoQuality": "FULL HD",
-    "fileSize": "4.17GB"
+    driveUrl: "https://mega.nz/folder/x6hxBIaA",
+    videoQuality: "FULL HD",
+    fileSize: "4.17GB",
   },
   {
-    "category": "Anime Clips",
-    "name": "i want to eat your pancreas",
-    "thumbnail": "https://i.ibb.co/DPG8k5gN/804bd2ac225c4b168243ea9f7e5953b7.webp",
-    "description": "Welcome to the ultimate editing resource for I Want to Eat Your Pancreas.\nWe’re dedicated to supporting the anime editing community by providing high-quality, upscaled, and raw clips from the film—completely free.",
-    "id": "res-1768370059993",
-    "createdAt": 1768370059993,
-    "isUpcoming": false,
-    "isSeasonBased": false,
-    "directKey": "u6Te8H9J6JKttwLeRHDJ6Q",
-    "driveLinks": [
+    category: "Anime Clips",
+    name: "i want to eat your pancreas",
+    thumbnail:
+      "https://i.ibb.co/DPG8k5gN/804bd2ac225c4b168243ea9f7e5953b7.webp",
+    description:
+      "Welcome to the ultimate editing resource for I Want to Eat Your Pancreas.\nWe’re dedicated to supporting the anime editing community by providing high-quality, upscaled, and raw clips from the film—completely free.",
+    id: "res-1768370059993",
+    createdAt: 1768370059993,
+    isUpcoming: false,
+    isSeasonBased: false,
+    directKey: "u6Te8H9J6JKttwLeRHDJ6Q",
+    driveLinks: [
       {
-        "label": "MEGA",
-        "url": "https://mega.nz/folder/wuomXYQI"
-      }
+        label: "MEGA",
+        url: "https://mega.nz/folder/wuomXYQI",
+      },
     ],
-    "driveUrl": "https://mega.nz/folder/wuomXYQI",
-    "videoQuality": "FULL HD",
-    "fileSize": "2.45GB"
+    driveUrl: "https://mega.nz/folder/wuomXYQI",
+    videoQuality: "FULL HD",
+    fileSize: "2.45GB",
   },
   {
-    "category": "Anime Clips",
-    "name": "The Garden of Words",
-    "description": "Welcome to the ultimate editing resource for The Garden of Words.\nWe’re dedicated to supporting the anime editing community by providing high-quality, upscaled, and raw clips from the film—completely free.",
-    "thumbnail": "https://i.ibb.co/1tTQ6KQS/MV5-BYjdi-MDdl-MDIt-OGM4-Ny00-Ym-E4-LTk0-MTEt-MGRh-M2-Y4-OWZk-ZDZk-Xk-Ey-Xk-Fqc-Gc.webp",
-    "id": "res-1768369982753",
-    "createdAt": 1768369982753,
-    "isUpcoming": false,
-    "isSeasonBased": false,
-    "directKey": "a25IVqFdMh4NbqZUd5uR5g",
-    "driveLinks": [
+    category: "Anime Clips",
+    name: "The Garden of Words",
+    description:
+      "Welcome to the ultimate editing resource for The Garden of Words.\nWe’re dedicated to supporting the anime editing community by providing high-quality, upscaled, and raw clips from the film—completely free.",
+    thumbnail:
+      "https://i.ibb.co/1tTQ6KQS/MV5-BYjdi-MDdl-MDIt-OGM4-Ny00-Ym-E4-LTk0-MTEt-MGRh-M2-Y4-OWZk-ZDZk-Xk-Ey-Xk-Fqc-Gc.webp",
+    id: "res-1768369982753",
+    createdAt: 1768369982753,
+    isUpcoming: false,
+    isSeasonBased: false,
+    directKey: "a25IVqFdMh4NbqZUd5uR5g",
+    driveLinks: [
       {
-        "label": "MEGA",
-        "url": "https://mega.nz/folder/tiYWiCIa"
-      }
+        label: "MEGA",
+        url: "https://mega.nz/folder/tiYWiCIa",
+      },
     ],
-    "driveUrl": "https://mega.nz/folder/tiYWiCIa",
-    "videoQuality": "FULL HD",
-    "fileSize": "2.32GB"
+    driveUrl: "https://mega.nz/folder/tiYWiCIa",
+    videoQuality: "FULL HD",
+    fileSize: "2.32GB",
   },
   {
-    "category": "Packs",
-    "name": "Core Transitions Pack - AAPOWER",
-    "thumbnail": "https://i.ibb.co/vC5K9qth/Videohive-Core-Transitions-Pack-350-Dynamic-Seamless-Transitions-for-After-Effects-AAPower.jpg",
-    "downloadUrl": "https://mega.nz/folder/tJ8SACja",
-    "description": "Core Transitions Pack is the ultimate collection of 350+ dynamic, seamless transitions for Adobe After Effects.\nEach transition is handcrafted to deliver smooth, cinematic movement and add energy to any edit. Designed for editors, motion designers, and content creators — it’s the fastest way to make your cuts stand out.",
-    "youtubeId": "2SVfd7Ffidk",
-    "id": "res-1768305934763",
-    "createdAt": 1768305934763,
-    "isUpcoming": false,
-    "isSeasonBased": false,
-    "keyLinks": [
+    category: "Packs",
+    name: "Core Transitions Pack - AAPOWER",
+    thumbnail:
+      "https://i.ibb.co/vC5K9qth/Videohive-Core-Transitions-Pack-350-Dynamic-Seamless-Transitions-for-After-Effects-AAPower.jpg",
+    downloadUrl: "https://mega.nz/folder/tJ8SACja",
+    description:
+      "Core Transitions Pack is the ultimate collection of 350+ dynamic, seamless transitions for Adobe After Effects.\nEach transition is handcrafted to deliver smooth, cinematic movement and add energy to any edit. Designed for editors, motion designers, and content creators — it’s the fastest way to make your cuts stand out.",
+    youtubeId: "2SVfd7Ffidk",
+    id: "res-1768305934763",
+    createdAt: 1768305934763,
+    isUpcoming: false,
+    isSeasonBased: false,
+    keyLinks: [
       {
-        "label": "ACCESS KEY",
-        "url": "https://work.ink/2bBx/core-transitions-pack-aapowr"
-      }
+        label: "ACCESS KEY",
+        url: "https://work.ink/2bBx/core-transitions-pack-aapowr",
+      },
     ],
-    "getKeyUrl": "https://work.ink/2bBx/core-transitions-pack-aapowr"
+    getKeyUrl: "https://work.ink/2bBx/core-transitions-pack-aapowr",
   },
   {
-    "category": "Anime Clips",
-    "name": "Jujutsu Kaisen",
-    "thumbnail": "https://i.ibb.co/zVhgB29H/MV5-BMj-Bl-NTEx-MDAt-MWZj-Zi00-MDc5-LWFk-Mjgt-ZDU0-ZWQ5-ODk3-YWY5-Xk-Ey-Xk-Fqc-Gc.webp",
-    "description": "Welcome to the ultimate editing hub for Jujutsu Kaisen. Built for editors, we provide high-quality, upscaled, and raw JJK clips—100% free for creative use.",
-    "id": "res-1768189001252",
-    "createdAt": 1768189001252,
-    "isUpcoming": false,
-    "isSeasonBased": true,
-    "seasons": [
+    category: "Anime Clips",
+    name: "Jujutsu Kaisen",
+    thumbnail:
+      "https://i.ibb.co/zVhgB29H/MV5-BMj-Bl-NTEx-MDAt-MWZj-Zi00-MDc5-LWFk-Mjgt-ZDU0-ZWQ5-ODk3-YWY5-Xk-Ey-Xk-Fqc-Gc.webp",
+    description:
+      "Welcome to the ultimate editing hub for Jujutsu Kaisen. Built for editors, we provide high-quality, upscaled, and raw JJK clips—100% free for creative use.",
+    id: "res-1768189001252",
+    createdAt: 1768189001252,
+    isUpcoming: false,
+    isSeasonBased: true,
+    seasons: [
       {
-        "id": "s-1768202154751",
-        "label": "SEASON 3",
-        "episodes": [
+        id: "s-1768202154751",
+        label: "SEASON 3",
+        episodes: [
           {
-            "id": "e-1768202156125",
-            "number": "1",
-            "driveLinks": [
+            id: "e-1768202156125",
+            number: "1",
+            driveLinks: [
               {
-                "label": "MEGA DRIVE",
-                "url": "https://mega.nz/folder/ZnByWQCR"
-              }
+                label: "MEGA DRIVE",
+                url: "https://mega.nz/folder/ZnByWQCR",
+              },
             ],
-            "keyLinks": [
+            keyLinks: [
               {
-                "label": "GET KEY",
-                "url": "https://work.ink/2bBx/jujutsu-kaisen-s03ep01"
-              }
-            ]
-          }
-        ]
-      }
-    ]
-  },
-  {
-    "category": "Software",
-    "name": "Premiere Pro - 2025",
-    "description": "Free Download Adobe Premiere Pro Pre-Activated offline installer for Windows.",
-    "thumbnail": "https://i.ibb.co/tpbDbbN9/premiere-pro.webp",
-    "downloadUrl": "https://work.ink/2bBx/Premiere-Pro-2025",
-    "id": "res-1768144076610",
-    "createdAt": 1768144076610
-  },
-  {
-    "category": "Anime Clips",
-    "name": "Suzume",
-    "description": "We are providing free clips resources to editors at 4k quality for free of cost and we just ask u to not use any adblocker and watch some ads and get the file decryption key.",
-    "thumbnail": "https://i.ibb.co/1tkqhKv2/e-K-Zk-GSo9-ZQ-HD-1.jpg",
-    "getKeyUrl": "https://work.ink/2bBx/suzume",
-    "youtubeId": "eK_ZkGSo9ZQ",
-    "id": "res-1768130967497",
-    "createdAt": 1768130967497,
-    "driveLinks": [
-      {
-        "label": "MEGA DRIVE 1",
-        "url": "https://mega.nz/folder/W9g0hTyL"
+                label: "GET KEY",
+                url: "https://work.ink/2bBx/jujutsu-kaisen-s03ep01",
+              },
+            ],
+          },
+        ],
       },
-      {
-        "label": "MEGA DRIVE 2",
-        "url": "https://mega.nz/folder/wjomFKIA"
-      },
-      {
-        "label": "MEGA DRIVE 3",
-        "url": "https://mega.nz/folder/oigUBQDC"
-      },
-      {
-        "label": "MEGA DRIVE 4",
-        "url": "https://mega.nz/folder/SU0h1bqS"
-      }
     ],
-    "driveUrl": "https://mega.nz/folder/W9g0hTyL",
-    "videoQuality": "4K",
-    "fileSize": "73.5GB",
-    "isUpcoming": false,
-    "isSeasonBased": false,
-    "keyLinks": [
+  },
+  {
+    category: "Software",
+    name: "Premiere Pro - 2025",
+    description:
+      "Free Download Adobe Premiere Pro Pre-Activated offline installer for Windows.",
+    thumbnail: "https://i.ibb.co/tpbDbbN9/premiere-pro.webp",
+    downloadUrl: "https://work.ink/2bBx/Premiere-Pro-2025",
+    id: "res-1768144076610",
+    createdAt: 1768144076610,
+  },
+  {
+    category: "Anime Clips",
+    name: "Suzume",
+    description:
+      "We are providing free clips resources to editors at 4k quality for free of cost and we just ask u to not use any adblocker and watch some ads and get the file decryption key.",
+    thumbnail: "https://i.ibb.co/1tkqhKv2/e-K-Zk-GSo9-ZQ-HD-1.jpg",
+    getKeyUrl: "https://work.ink/2bBx/suzume",
+    youtubeId: "eK_ZkGSo9ZQ",
+    id: "res-1768130967497",
+    createdAt: 1768130967497,
+    driveLinks: [
       {
-        "label": "ACCESS KEY",
-        "url": "https://work.ink/2bBx/suzume"
-      }
-    ]
+        label: "MEGA DRIVE 1",
+        url: "https://mega.nz/folder/W9g0hTyL",
+      },
+      {
+        label: "MEGA DRIVE 2",
+        url: "https://mega.nz/folder/wjomFKIA",
+      },
+      {
+        label: "MEGA DRIVE 3",
+        url: "https://mega.nz/folder/oigUBQDC",
+      },
+      {
+        label: "MEGA DRIVE 4",
+        url: "https://mega.nz/folder/SU0h1bqS",
+      },
+    ],
+    driveUrl: "https://mega.nz/folder/W9g0hTyL",
+    videoQuality: "4K",
+    fileSize: "73.5GB",
+    isUpcoming: false,
+    isSeasonBased: false,
+    keyLinks: [
+      {
+        label: "ACCESS KEY",
+        url: "https://work.ink/2bBx/suzume",
+      },
+    ],
   },
   {
-    "category": "Software",
-    "description": "Free Download Adobe After Effects CC Pre-Activated offline installer for Windows.",
-    "downloadUrl": "https://work.ink/2bBx/after-effect-2023",
-    "thumbnail": "https://i.ibb.co/N6gYLx8r/Adobe-After-Effects.webp",
-    "name": "After Effect - 2023",
-    "id": "res-1768124145604",
-    "createdAt": 1768124145604
+    category: "Software",
+    description:
+      "Free Download Adobe After Effects CC Pre-Activated offline installer for Windows.",
+    downloadUrl: "https://work.ink/2bBx/after-effect-2023",
+    thumbnail: "https://i.ibb.co/N6gYLx8r/Adobe-After-Effects.webp",
+    name: "After Effect - 2023",
+    id: "res-1768124145604",
+    createdAt: 1768124145604,
   },
   {
-    "category": "Software",
-    "name": "After Effect - 2025",
-    "description": "Free Download Adobe After Effects CC Pre-Activated offline installer for Windows.",
-    "thumbnail": "https://i.ibb.co/N6gYLx8r/Adobe-After-Effects.webp",
-    "downloadUrl": "https://work.ink/2bBx/after-effect-2025",
-    "id": "res-1768124006650",
-    "createdAt": 1768124006650
+    category: "Software",
+    name: "After Effect - 2025",
+    description:
+      "Free Download Adobe After Effects CC Pre-Activated offline installer for Windows.",
+    thumbnail: "https://i.ibb.co/N6gYLx8r/Adobe-After-Effects.webp",
+    downloadUrl: "https://work.ink/2bBx/after-effect-2025",
+    id: "res-1768124006650",
+    createdAt: 1768124006650,
   },
   {
-    "category": "Software",
-    "name": "After Effect - 2024",
-    "thumbnail": "https://i.ibb.co/N6gYLx8r/Adobe-After-Effects.webp",
-    "description": "Free Download Adobe After Effects CC Pre-Activated offline installer for Windows.",
-    "downloadUrl": "https://work.ink/2bBx/after-effect-2024",
-    "id": "res-1768042729258",
-    "createdAt": 1768042729258,
-    "isUpcoming": false,
-    "isSeasonBased": false
+    category: "Software",
+    name: "After Effect - 2024",
+    thumbnail: "https://i.ibb.co/N6gYLx8r/Adobe-After-Effects.webp",
+    description:
+      "Free Download Adobe After Effects CC Pre-Activated offline installer for Windows.",
+    downloadUrl: "https://work.ink/2bBx/after-effect-2024",
+    id: "res-1768042729258",
+    createdAt: 1768042729258,
+    isUpcoming: false,
+    isSeasonBased: false,
   },
   {
-    "category": "Anime Clips",
-    "name": "Chainsaw Man - Reze Arc",
-    "youtubeId": "OvN4MXnW2Qw",
-    "driveUrl": "https://mega.nz/folder/xJciFQJB",
-    "getKeyUrl": "https://work.ink/2bBx/anime-forensic-chainsaw-man-reze-arc-clips",
-    "description": "Welcome to the ultimate editing resource for Chainsaw Man – The Movie: Reze Arc. We are dedicated to supporting the editing community by providing high-quality, upscaled, and raw clips completely for free.",
-    "thumbnail": "https://i.ibb.co/D35KSbc/Ov-N4-MXn-W2-Qw-HD.jpg",
-    "id": "res-1768039688845",
-    "createdAt": 1768039688845
-  }
+    category: "Anime Clips",
+    name: "Chainsaw Man - Reze Arc",
+    youtubeId: "OvN4MXnW2Qw",
+    driveUrl: "https://mega.nz/folder/xJciFQJB",
+    getKeyUrl:
+      "https://work.ink/2bBx/anime-forensic-chainsaw-man-reze-arc-clips",
+    description:
+      "Welcome to the ultimate editing resource for Chainsaw Man – The Movie: Reze Arc. We are dedicated to supporting the editing community by providing high-quality, upscaled, and raw clips completely for free.",
+    thumbnail: "https://i.ibb.co/D35KSbc/Ov-N4-MXn-W2-Qw-HD.jpg",
+    id: "res-1768039688845",
+    createdAt: 1768039688845,
+  },
 ] as any;
 
-const STORAGE_KEY = 'resource_forensic_vault';
-const VERSION_KEY = 'resource_forensic_version';
+const STORAGE_KEY = "resource_forensic_vault";
+const VERSION_KEY = "resource_forensic_version";
 
 // Determine version based on newest item timestamp to force cache bypass for returning users
-const CURRENT_VERSION = Math.max(...INITIAL_RESOURCES.map(r => r.createdAt || 0), 0);
+const CURRENT_VERSION = Math.max(
+  ...INITIAL_RESOURCES.map((r) => r.createdAt || 0),
+  0,
+);
 
 export const getResources = (): Resource[] => {
   const stored = localStorage.getItem(STORAGE_KEY);
@@ -317,7 +344,7 @@ export const getResources = (): Resource[] => {
     localStorage.setItem(VERSION_KEY, CURRENT_VERSION.toString());
     return INITIAL_RESOURCES;
   }
-  
+
   return JSON.parse(stored);
 };
 
@@ -330,14 +357,16 @@ export const saveResource = (resource: Resource) => {
 
 export const updateResource = (updatedResource: Resource) => {
   const resources = getResources();
-  const updated = resources.map(r => r.id === updatedResource.id ? updatedResource : r);
+  const updated = resources.map((r) =>
+    r.id === updatedResource.id ? updatedResource : r,
+  );
   localStorage.setItem(STORAGE_KEY, JSON.stringify(updated));
   return updated;
 };
 
 export const deleteResource = (id: string) => {
   const resources = getResources();
-  const updated = resources.filter(r => r.id !== id);
+  const updated = resources.filter((r) => r.id !== id);
   localStorage.setItem(STORAGE_KEY, JSON.stringify(updated));
   return updated;
 };

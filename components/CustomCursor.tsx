@@ -1,5 +1,4 @@
-
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState } from "react";
 
 // Define props interface to resolve TypeScript 'IntrinsicAttributes' error in App.tsx
 interface CustomCursorProps {
@@ -18,11 +17,11 @@ const CustomCursor: React.FC<CustomCursorProps> = ({ isDarkMode = true }) => {
     const onMouseOver = (e: MouseEvent) => {
       const target = e.target as HTMLElement;
       if (
-        target.tagName.toLowerCase() === 'button' ||
-        target.tagName.toLowerCase() === 'a' ||
-        target.closest('.clickable') ||
-        target.closest('input') ||
-        target.closest('textarea')
+        target.tagName.toLowerCase() === "button" ||
+        target.tagName.toLowerCase() === "a" ||
+        target.closest(".clickable") ||
+        target.closest("input") ||
+        target.closest("textarea")
       ) {
         setIsHovering(true);
       } else {
@@ -30,12 +29,12 @@ const CustomCursor: React.FC<CustomCursorProps> = ({ isDarkMode = true }) => {
       }
     };
 
-    window.addEventListener('mousemove', onMouseMove);
-    window.addEventListener('mouseover', onMouseOver);
+    window.addEventListener("mousemove", onMouseMove);
+    window.addEventListener("mouseover", onMouseOver);
 
     return () => {
-      window.removeEventListener('mousemove', onMouseMove);
-      window.removeEventListener('mouseover', onMouseOver);
+      window.removeEventListener("mousemove", onMouseMove);
+      window.removeEventListener("mouseover", onMouseOver);
     };
   }, []);
 
